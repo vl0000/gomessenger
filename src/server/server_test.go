@@ -40,6 +40,13 @@ func TestServer(t *testing.T) {
 
 		req := connect.NewRequest(&message_req)
 		s.SendDirectMessage(context.TODO(), req)
+		q, err := db.Query("SELECT * FROM messages WHERE sender = '123-456';")
+		if err != nil {
+			t.Fatal(err)
+		}
+		if !q.Next() {
+			t.Fatal("Message not found in DB")
+		}
 		os.Remove("./testing.db")
 	})
 }

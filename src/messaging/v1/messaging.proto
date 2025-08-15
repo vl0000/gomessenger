@@ -1,0 +1,28 @@
+syntax = "proto3";
+package messaging.v1;
+
+option go_package = "github.com/vl0000/gomessenger/gen/messaging/v1;messagingv1";
+
+
+message Message {
+  uint64 id = 1;
+  string sender = 2;
+  string receiver = 3;
+  string content = 4;
+  string timestamp = 5;
+}
+
+message SendDirectMessageRequest {
+  Message msg = 1;
+}
+
+enum STATUS {
+  STATUS_UNSPECIFIED = 0;
+  STATUS_SUCCESS = 1;
+  STATUS_FAILURE = 2;
+}
+message SendDirectMessageResponse { STATUS content = 1; }
+
+service MessagingService {
+rpc SendDirectMessage(SendDirectMessageRequest) returns (SendDirectMessageResponse) {}
+}

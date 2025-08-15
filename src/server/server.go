@@ -33,3 +33,13 @@ func (s *MessagingServer) SendDirectMessage(
 	res.Header().Set("Messaging-Version", "v1")
 	return res, nil
 }
+
+func (s *MessagingServer) GetDMs(
+	ctx context.Context,
+	req *connect.Request[messagingv1.GetDMsRequest],
+) (*connect.Response[messagingv1.GetDMsResponse], error) {
+	log.Println("Retrieve DMS")
+	res := connect.NewResponse(&messagingv1.GetDMsResponse{})
+	res.Header().Set("Messaging-Version", "v1")
+	return res, nil
+}

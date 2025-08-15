@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"log"
 	"os"
+
+	_ "github.com/mattn/go-sqlite3"
 )
 
 func SetupTestDatabase(path string) (*sql.DB, error) {
@@ -13,7 +15,7 @@ func SetupTestDatabase(path string) (*sql.DB, error) {
 	if err != nil {
 		return nil, fmt.Errorf("DB setup -> %s", err)
 	}
-	db, err := sql.Open("sqlite3", "./database.db")
+	db, err := sql.Open("sqlite3", path)
 	if err != nil {
 		db.Close()
 		return nil, fmt.Errorf("DB setup -> %s", err)

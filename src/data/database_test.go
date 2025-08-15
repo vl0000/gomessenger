@@ -7,7 +7,7 @@ import (
 	"github.com/vl0000/gomessenger/data"
 )
 
-func TestSetupTestDB(t *testing.T) {
+func TestDB(t *testing.T) {
 	t.Run("Test db can setup", func(t *testing.T) {
 		os.Setenv("DB_SCHEMA_PATH", "./data/database.sql")
 		data.SetupTestDatabase("./testdb.db")

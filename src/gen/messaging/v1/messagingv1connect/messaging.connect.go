@@ -36,11 +36,14 @@ const (
 	// MessagingServiceSendDirectMessageProcedure is the fully-qualified name of the MessagingService's
 	// SendDirectMessage RPC.
 	MessagingServiceSendDirectMessageProcedure = "/messaging.v1.MessagingService/SendDirectMessage"
+	// MessagingServiceGetDMsProcedure is the fully-qualified name of the MessagingService's GetDMs RPC.
+	MessagingServiceGetDMsProcedure = "/messaging.v1.MessagingService/GetDMs"
 )
 
 // MessagingServiceClient is a client for the messaging.v1.MessagingService service.
 type MessagingServiceClient interface {
 	SendDirectMessage(context.Context, *connect.Request[v1.SendDirectMessageRequest]) (*connect.Response[v1.SendDirectMessageResponse], error)
+	GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error)
 }
 
 // NewMessagingServiceClient constructs a client for the messaging.v1.MessagingService service. By
@@ -60,12 +63,19 @@ func NewMessagingServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(messagingServiceMethods.ByName("SendDirectMessage")),
 			connect.WithClientOptions(opts...),
 		),
+		getDMs: connect.NewClient[v1.GetDMsRequest, v1.GetDMsResponse](
+			httpClient,
+			baseURL+MessagingServiceGetDMsProcedure,
+			connect.WithSchema(messagingServiceMethods.ByName("GetDMs")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
 // messagingServiceClient implements MessagingServiceClient.
 type messagingServiceClient struct {
 	sendDirectMessage *connect.Client[v1.SendDirectMessageRequest, v1.SendDirectMessageResponse]
+	getDMs            *connect.Client[v1.GetDMsRequest, v1.GetDMsResponse]
 }
 
 // SendDirectMessage calls messaging.v1.MessagingService.SendDirectMessage.
@@ -73,9 +83,15 @@ func (c *messagingServiceClient) SendDirectMessage(ctx context.Context, req *con
 	return c.sendDirectMessage.CallUnary(ctx, req)
 }
 
+// GetDMs calls messaging.v1.MessagingService.GetDMs.
+func (c *messagingServiceClient) GetDMs(ctx context.Context, req *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error) {
+	return c.getDMs.CallUnary(ctx, req)
+}
+
 // MessagingServiceHandler is an implementation of the messaging.v1.MessagingService service.
 type MessagingServiceHandler interface {
 	SendDirectMessage(context.Context, *connect.Request[v1.SendDirectMessageRequest]) (*connect.Response[v1.SendDirectMessageResponse], error)
+	GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error)
 }
 
 // NewMessagingServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -91,10 +107,18 @@ func NewMessagingServiceHandler(svc MessagingServiceHandler, opts ...connect.Han
 		connect.WithSchema(messagingServiceMethods.ByName("SendDirectMessage")),
 		connect.WithHandlerOptions(opts...),
 	)
+	messagingServiceGetDMsHandler := connect.NewUnaryHandler(
+		MessagingServiceGetDMsProcedure,
+		svc.GetDMs,
+		connect.WithSchema(messagingServiceMethods.ByName("GetDMs")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/messaging.v1.MessagingService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MessagingServiceSendDirectMessageProcedure:
 			messagingServiceSendDirectMessageHandler.ServeHTTP(w, r)
+		case MessagingServiceGetDMsProcedure:
+			messagingServiceGetDMsHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -106,4 +130,8 @@ type UnimplementedMessagingServiceHandler struct{}
 
 func (UnimplementedMessagingServiceHandler) SendDirectMessage(context.Context, *connect.Request[v1.SendDirectMessageRequest]) (*connect.Response[v1.SendDirectMessageResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("messaging.v1.MessagingService.SendDirectMessage is not implemented"))
+}
+
+func (UnimplementedMessagingServiceHandler) GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("messaging.v1.MessagingService.GetDMs is not implemented"))
 }

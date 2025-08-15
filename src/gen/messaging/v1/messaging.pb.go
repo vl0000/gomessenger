@@ -72,11 +72,11 @@ func (STATUS) EnumDescriptor() ([]byte, []int) {
 
 type Message struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Id            uint64                 `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
 	Sender        string                 `protobuf:"bytes,2,opt,name=sender,proto3" json:"sender,omitempty"`
 	Receiver      string                 `protobuf:"bytes,3,opt,name=receiver,proto3" json:"receiver,omitempty"`
 	Content       string                 `protobuf:"bytes,4,opt,name=content,proto3" json:"content,omitempty"`
-	Timestamp     string                 `protobuf:"bytes,5,opt,name=timestamp,proto3" json:"timestamp,omitempty"`
+	Timestamp     *string                `protobuf:"bytes,5,opt,name=timestamp,proto3,oneof" json:"timestamp,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -112,8 +112,8 @@ func (*Message) Descriptor() ([]byte, []int) {
 }
 
 func (x *Message) GetId() uint64 {
-	if x != nil {
-		return x.Id
+	if x != nil && x.Id != nil {
+		return *x.Id
 	}
 	return 0
 }
@@ -140,8 +140,8 @@ func (x *Message) GetContent() string {
 }
 
 func (x *Message) GetTimestamp() string {
-	if x != nil {
-		return x.Timestamp
+	if x != nil && x.Timestamp != nil {
+		return *x.Timestamp
 	}
 	return ""
 }
@@ -190,6 +190,110 @@ func (x *SendDirectMessageRequest) GetMsg() *Message {
 	return nil
 }
 
+type GetDMsRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Sender        string                 `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
+	Receiver      string                 `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty"`
+	FromDate      string                 `protobuf:"bytes,3,opt,name=from_date,json=fromDate,proto3" json:"from_date,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDMsRequest) Reset() {
+	*x = GetDMsRequest{}
+	mi := &file_messaging_v1_messaging_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDMsRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDMsRequest) ProtoMessage() {}
+
+func (x *GetDMsRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_messaging_v1_messaging_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDMsRequest.ProtoReflect.Descriptor instead.
+func (*GetDMsRequest) Descriptor() ([]byte, []int) {
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *GetDMsRequest) GetSender() string {
+	if x != nil {
+		return x.Sender
+	}
+	return ""
+}
+
+func (x *GetDMsRequest) GetReceiver() string {
+	if x != nil {
+		return x.Receiver
+	}
+	return ""
+}
+
+func (x *GetDMsRequest) GetFromDate() string {
+	if x != nil {
+		return x.FromDate
+	}
+	return ""
+}
+
+type GetDMsResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Messages      []*Message             `protobuf:"bytes,1,rep,name=messages,proto3" json:"messages,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetDMsResponse) Reset() {
+	*x = GetDMsResponse{}
+	mi := &file_messaging_v1_messaging_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetDMsResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetDMsResponse) ProtoMessage() {}
+
+func (x *GetDMsResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_messaging_v1_messaging_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetDMsResponse.ProtoReflect.Descriptor instead.
+func (*GetDMsResponse) Descriptor() ([]byte, []int) {
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *GetDMsResponse) GetMessages() []*Message {
+	if x != nil {
+		return x.Messages
+	}
+	return nil
+}
+
 type SendDirectMessageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Content       STATUS                 `protobuf:"varint,1,opt,name=content,proto3,enum=messaging.v1.STATUS" json:"content,omitempty"`
@@ -199,7 +303,7 @@ type SendDirectMessageResponse struct {
 
 func (x *SendDirectMessageResponse) Reset() {
 	*x = SendDirectMessageResponse{}
-	mi := &file_messaging_v1_messaging_proto_msgTypes[2]
+	mi := &file_messaging_v1_messaging_proto_msgTypes[4]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -211,7 +315,7 @@ func (x *SendDirectMessageResponse) String() string {
 func (*SendDirectMessageResponse) ProtoMessage() {}
 
 func (x *SendDirectMessageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_messaging_v1_messaging_proto_msgTypes[2]
+	mi := &file_messaging_v1_messaging_proto_msgTypes[4]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -224,7 +328,7 @@ func (x *SendDirectMessageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendDirectMessageResponse.ProtoReflect.Descriptor instead.
 func (*SendDirectMessageResponse) Descriptor() ([]byte, []int) {
-	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{2}
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{4}
 }
 
 func (x *SendDirectMessageResponse) GetContent() STATUS {
@@ -238,23 +342,33 @@ var File_messaging_v1_messaging_proto protoreflect.FileDescriptor
 
 const file_messaging_v1_messaging_proto_rawDesc = "" +
 	"\n" +
-	"\x1cmessaging/v1/messaging.proto\x12\fmessaging.v1\"\x85\x01\n" +
-	"\aMessage\x12\x0e\n" +
-	"\x02id\x18\x01 \x01(\x04R\x02id\x12\x16\n" +
+	"\x1cmessaging/v1/messaging.proto\x12\fmessaging.v1\"\xa4\x01\n" +
+	"\aMessage\x12\x13\n" +
+	"\x02id\x18\x01 \x01(\x04H\x00R\x02id\x88\x01\x01\x12\x16\n" +
 	"\x06sender\x18\x02 \x01(\tR\x06sender\x12\x1a\n" +
 	"\breceiver\x18\x03 \x01(\tR\breceiver\x12\x18\n" +
-	"\acontent\x18\x04 \x01(\tR\acontent\x12\x1c\n" +
-	"\ttimestamp\x18\x05 \x01(\tR\ttimestamp\"C\n" +
+	"\acontent\x18\x04 \x01(\tR\acontent\x12!\n" +
+	"\ttimestamp\x18\x05 \x01(\tH\x01R\ttimestamp\x88\x01\x01B\x05\n" +
+	"\x03_idB\f\n" +
+	"\n" +
+	"_timestamp\"C\n" +
 	"\x18SendDirectMessageRequest\x12'\n" +
-	"\x03msg\x18\x01 \x01(\v2\x15.messaging.v1.MessageR\x03msg\"K\n" +
+	"\x03msg\x18\x01 \x01(\v2\x15.messaging.v1.MessageR\x03msg\"`\n" +
+	"\rGetDMsRequest\x12\x16\n" +
+	"\x06sender\x18\x01 \x01(\tR\x06sender\x12\x1a\n" +
+	"\breceiver\x18\x02 \x01(\tR\breceiver\x12\x1b\n" +
+	"\tfrom_date\x18\x03 \x01(\tR\bfromDate\"C\n" +
+	"\x0eGetDMsResponse\x121\n" +
+	"\bmessages\x18\x01 \x03(\v2\x15.messaging.v1.MessageR\bmessages\"K\n" +
 	"\x19SendDirectMessageResponse\x12.\n" +
 	"\acontent\x18\x01 \x01(\x0e2\x14.messaging.v1.STATUSR\acontent*H\n" +
 	"\x06STATUS\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x12\n" +
 	"\x0eSTATUS_SUCCESS\x10\x01\x12\x12\n" +
-	"\x0eSTATUS_FAILURE\x10\x022z\n" +
+	"\x0eSTATUS_FAILURE\x10\x022\xc1\x01\n" +
 	"\x10MessagingService\x12f\n" +
-	"\x11SendDirectMessage\x12&.messaging.v1.SendDirectMessageRequest\x1a'.messaging.v1.SendDirectMessageResponse\"\x00B<Z:github.com/vl0000/gomessenger/gen/messaging/v1;messagingv1b\x06proto3"
+	"\x11SendDirectMessage\x12&.messaging.v1.SendDirectMessageRequest\x1a'.messaging.v1.SendDirectMessageResponse\"\x00\x12E\n" +
+	"\x06GetDMs\x12\x1b.messaging.v1.GetDMsRequest\x1a\x1c.messaging.v1.GetDMsResponse\"\x00B<Z:github.com/vl0000/gomessenger/gen/messaging/v1;messagingv1b\x06proto3"
 
 var (
 	file_messaging_v1_messaging_proto_rawDescOnce sync.Once
@@ -269,23 +383,28 @@ func file_messaging_v1_messaging_proto_rawDescGZIP() []byte {
 }
 
 var file_messaging_v1_messaging_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_messaging_v1_messaging_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_messaging_v1_messaging_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
 var file_messaging_v1_messaging_proto_goTypes = []any{
 	(STATUS)(0),                       // 0: messaging.v1.STATUS
 	(*Message)(nil),                   // 1: messaging.v1.Message
 	(*SendDirectMessageRequest)(nil),  // 2: messaging.v1.SendDirectMessageRequest
-	(*SendDirectMessageResponse)(nil), // 3: messaging.v1.SendDirectMessageResponse
+	(*GetDMsRequest)(nil),             // 3: messaging.v1.GetDMsRequest
+	(*GetDMsResponse)(nil),            // 4: messaging.v1.GetDMsResponse
+	(*SendDirectMessageResponse)(nil), // 5: messaging.v1.SendDirectMessageResponse
 }
 var file_messaging_v1_messaging_proto_depIdxs = []int32{
 	1, // 0: messaging.v1.SendDirectMessageRequest.msg:type_name -> messaging.v1.Message
-	0, // 1: messaging.v1.SendDirectMessageResponse.content:type_name -> messaging.v1.STATUS
-	2, // 2: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
-	3, // 3: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
-	3, // [3:4] is the sub-list for method output_type
-	2, // [2:3] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	1, // 1: messaging.v1.GetDMsResponse.messages:type_name -> messaging.v1.Message
+	0, // 2: messaging.v1.SendDirectMessageResponse.content:type_name -> messaging.v1.STATUS
+	2, // 3: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
+	3, // 4: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
+	5, // 5: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
+	4, // 6: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
+	5, // [5:7] is the sub-list for method output_type
+	3, // [3:5] is the sub-list for method input_type
+	3, // [3:3] is the sub-list for extension type_name
+	3, // [3:3] is the sub-list for extension extendee
+	0, // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_messaging_v1_messaging_proto_init() }
@@ -293,13 +412,14 @@ func file_messaging_v1_messaging_proto_init() {
 	if File_messaging_v1_messaging_proto != nil {
 		return
 	}
+	file_messaging_v1_messaging_proto_msgTypes[0].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_messaging_v1_messaging_proto_rawDesc), len(file_messaging_v1_messaging_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   3,
+			NumMessages:   5,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

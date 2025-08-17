@@ -29,13 +29,12 @@ func (s *MessagingServer) SendDirectMessage(
 	ctx context.Context,
 	req *connect.Request[messagingv1.SendDirectMessageRequest],
 ) (*connect.Response[messagingv1.SendDirectMessageResponse], error) {
-	log.Println("DM")
 
 	_, err := s.Db.Exec(`INSERT INTO messages (sender, receiver, content, timestamp) VALUES
 		(?, ?, ?, datetime('now'));
 		`, req.Msg.Msg.Sender, req.Msg.Msg.Receiver, req.Msg.Msg.Receiver, req.Msg.Msg.Content)
 
-	if err != nil {
+	if err != nil || req == nil {
 		res := connect.NewResponse(&messagingv1.SendDirectMessageResponse{
 			Content: messagingv1.STATUS_STATUS_FAILURE,
 		})

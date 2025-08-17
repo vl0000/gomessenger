@@ -146,6 +146,206 @@ func (x *Message) GetTimestamp() string {
 	return ""
 }
 
+type RegisterUserRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Username      string                 `protobuf:"bytes,1,opt,name=username,proto3" json:"username,omitempty"`
+	PhoneNumber   string                 `protobuf:"bytes,2,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
+	Password      string                 `protobuf:"bytes,3,opt,name=password,proto3" json:"password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RegisterUserRequest) Reset() {
+	*x = RegisterUserRequest{}
+	mi := &file_messaging_v1_messaging_proto_msgTypes[1]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RegisterUserRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegisterUserRequest) ProtoMessage() {}
+
+func (x *RegisterUserRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_messaging_v1_messaging_proto_msgTypes[1]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegisterUserRequest.ProtoReflect.Descriptor instead.
+func (*RegisterUserRequest) Descriptor() ([]byte, []int) {
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{1}
+}
+
+func (x *RegisterUserRequest) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
+func (x *RegisterUserRequest) GetPhoneNumber() string {
+	if x != nil {
+		return x.PhoneNumber
+	}
+	return ""
+}
+
+func (x *RegisterUserRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type RegisterUserResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	JwtToken      string                 `protobuf:"bytes,1,opt,name=jwt_token,json=jwtToken,proto3" json:"jwt_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *RegisterUserResponse) Reset() {
+	*x = RegisterUserResponse{}
+	mi := &file_messaging_v1_messaging_proto_msgTypes[2]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *RegisterUserResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*RegisterUserResponse) ProtoMessage() {}
+
+func (x *RegisterUserResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_messaging_v1_messaging_proto_msgTypes[2]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use RegisterUserResponse.ProtoReflect.Descriptor instead.
+func (*RegisterUserResponse) Descriptor() ([]byte, []int) {
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *RegisterUserResponse) GetJwtToken() string {
+	if x != nil {
+		return x.JwtToken
+	}
+	return ""
+}
+
+type LoginRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PhoneNumber   string                 `protobuf:"bytes,1,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
+	Password      string                 `protobuf:"bytes,2,opt,name=password,proto3" json:"password,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoginRequest) Reset() {
+	*x = LoginRequest{}
+	mi := &file_messaging_v1_messaging_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoginRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginRequest) ProtoMessage() {}
+
+func (x *LoginRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_messaging_v1_messaging_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginRequest.ProtoReflect.Descriptor instead.
+func (*LoginRequest) Descriptor() ([]byte, []int) {
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *LoginRequest) GetPhoneNumber() string {
+	if x != nil {
+		return x.PhoneNumber
+	}
+	return ""
+}
+
+func (x *LoginRequest) GetPassword() string {
+	if x != nil {
+		return x.Password
+	}
+	return ""
+}
+
+type LoginResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	JwtToken      string                 `protobuf:"bytes,1,opt,name=jwt_token,json=jwtToken,proto3" json:"jwt_token,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *LoginResponse) Reset() {
+	*x = LoginResponse{}
+	mi := &file_messaging_v1_messaging_proto_msgTypes[4]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *LoginResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*LoginResponse) ProtoMessage() {}
+
+func (x *LoginResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_messaging_v1_messaging_proto_msgTypes[4]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use LoginResponse.ProtoReflect.Descriptor instead.
+func (*LoginResponse) Descriptor() ([]byte, []int) {
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{4}
+}
+
+func (x *LoginResponse) GetJwtToken() string {
+	if x != nil {
+		return x.JwtToken
+	}
+	return ""
+}
+
 type SendDirectMessageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Msg           *Message               `protobuf:"bytes,1,opt,name=msg,proto3" json:"msg,omitempty"`
@@ -155,7 +355,7 @@ type SendDirectMessageRequest struct {
 
 func (x *SendDirectMessageRequest) Reset() {
 	*x = SendDirectMessageRequest{}
-	mi := &file_messaging_v1_messaging_proto_msgTypes[1]
+	mi := &file_messaging_v1_messaging_proto_msgTypes[5]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -167,7 +367,7 @@ func (x *SendDirectMessageRequest) String() string {
 func (*SendDirectMessageRequest) ProtoMessage() {}
 
 func (x *SendDirectMessageRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_messaging_v1_messaging_proto_msgTypes[1]
+	mi := &file_messaging_v1_messaging_proto_msgTypes[5]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -180,7 +380,7 @@ func (x *SendDirectMessageRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendDirectMessageRequest.ProtoReflect.Descriptor instead.
 func (*SendDirectMessageRequest) Descriptor() ([]byte, []int) {
-	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{1}
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{5}
 }
 
 func (x *SendDirectMessageRequest) GetMsg() *Message {
@@ -201,7 +401,7 @@ type GetDMsRequest struct {
 
 func (x *GetDMsRequest) Reset() {
 	*x = GetDMsRequest{}
-	mi := &file_messaging_v1_messaging_proto_msgTypes[2]
+	mi := &file_messaging_v1_messaging_proto_msgTypes[6]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -213,7 +413,7 @@ func (x *GetDMsRequest) String() string {
 func (*GetDMsRequest) ProtoMessage() {}
 
 func (x *GetDMsRequest) ProtoReflect() protoreflect.Message {
-	mi := &file_messaging_v1_messaging_proto_msgTypes[2]
+	mi := &file_messaging_v1_messaging_proto_msgTypes[6]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -226,7 +426,7 @@ func (x *GetDMsRequest) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDMsRequest.ProtoReflect.Descriptor instead.
 func (*GetDMsRequest) Descriptor() ([]byte, []int) {
-	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{2}
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{6}
 }
 
 func (x *GetDMsRequest) GetSender() string {
@@ -259,7 +459,7 @@ type GetDMsResponse struct {
 
 func (x *GetDMsResponse) Reset() {
 	*x = GetDMsResponse{}
-	mi := &file_messaging_v1_messaging_proto_msgTypes[3]
+	mi := &file_messaging_v1_messaging_proto_msgTypes[7]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -271,7 +471,7 @@ func (x *GetDMsResponse) String() string {
 func (*GetDMsResponse) ProtoMessage() {}
 
 func (x *GetDMsResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_messaging_v1_messaging_proto_msgTypes[3]
+	mi := &file_messaging_v1_messaging_proto_msgTypes[7]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -284,7 +484,7 @@ func (x *GetDMsResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use GetDMsResponse.ProtoReflect.Descriptor instead.
 func (*GetDMsResponse) Descriptor() ([]byte, []int) {
-	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{3}
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{7}
 }
 
 func (x *GetDMsResponse) GetMessages() []*Message {
@@ -303,7 +503,7 @@ type SendDirectMessageResponse struct {
 
 func (x *SendDirectMessageResponse) Reset() {
 	*x = SendDirectMessageResponse{}
-	mi := &file_messaging_v1_messaging_proto_msgTypes[4]
+	mi := &file_messaging_v1_messaging_proto_msgTypes[8]
 	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 	ms.StoreMessageInfo(mi)
 }
@@ -315,7 +515,7 @@ func (x *SendDirectMessageResponse) String() string {
 func (*SendDirectMessageResponse) ProtoMessage() {}
 
 func (x *SendDirectMessageResponse) ProtoReflect() protoreflect.Message {
-	mi := &file_messaging_v1_messaging_proto_msgTypes[4]
+	mi := &file_messaging_v1_messaging_proto_msgTypes[8]
 	if x != nil {
 		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
 		if ms.LoadMessageInfo() == nil {
@@ -328,7 +528,7 @@ func (x *SendDirectMessageResponse) ProtoReflect() protoreflect.Message {
 
 // Deprecated: Use SendDirectMessageResponse.ProtoReflect.Descriptor instead.
 func (*SendDirectMessageResponse) Descriptor() ([]byte, []int) {
-	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{4}
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{8}
 }
 
 func (x *SendDirectMessageResponse) GetContent() STATUS {
@@ -351,7 +551,18 @@ const file_messaging_v1_messaging_proto_rawDesc = "" +
 	"\ttimestamp\x18\x05 \x01(\tH\x01R\ttimestamp\x88\x01\x01B\x05\n" +
 	"\x03_idB\f\n" +
 	"\n" +
-	"_timestamp\"C\n" +
+	"_timestamp\"p\n" +
+	"\x13RegisterUserRequest\x12\x1a\n" +
+	"\busername\x18\x01 \x01(\tR\busername\x12!\n" +
+	"\fphone_number\x18\x02 \x01(\tR\vphoneNumber\x12\x1a\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword\"3\n" +
+	"\x14RegisterUserResponse\x12\x1b\n" +
+	"\tjwt_token\x18\x01 \x01(\tR\bjwtToken\"M\n" +
+	"\fLoginRequest\x12!\n" +
+	"\fphone_number\x18\x01 \x01(\tR\vphoneNumber\x12\x1a\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\",\n" +
+	"\rLoginResponse\x12\x1b\n" +
+	"\tjwt_token\x18\x01 \x01(\tR\bjwtToken\"C\n" +
 	"\x18SendDirectMessageRequest\x12'\n" +
 	"\x03msg\x18\x01 \x01(\v2\x15.messaging.v1.MessageR\x03msg\"`\n" +
 	"\rGetDMsRequest\x12\x16\n" +
@@ -365,10 +576,12 @@ const file_messaging_v1_messaging_proto_rawDesc = "" +
 	"\x06STATUS\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x12\n" +
 	"\x0eSTATUS_SUCCESS\x10\x01\x12\x12\n" +
-	"\x0eSTATUS_FAILURE\x10\x022\xc1\x01\n" +
+	"\x0eSTATUS_FAILURE\x10\x022\xde\x02\n" +
 	"\x10MessagingService\x12f\n" +
 	"\x11SendDirectMessage\x12&.messaging.v1.SendDirectMessageRequest\x1a'.messaging.v1.SendDirectMessageResponse\"\x00\x12E\n" +
-	"\x06GetDMs\x12\x1b.messaging.v1.GetDMsRequest\x1a\x1c.messaging.v1.GetDMsResponse\"\x00B<Z:github.com/vl0000/gomessenger/gen/messaging/v1;messagingv1b\x06proto3"
+	"\x06GetDMs\x12\x1b.messaging.v1.GetDMsRequest\x1a\x1c.messaging.v1.GetDMsResponse\"\x00\x12W\n" +
+	"\fRegisterUser\x12!.messaging.v1.RegisterUserRequest\x1a\".messaging.v1.RegisterUserResponse\"\x00\x12B\n" +
+	"\x05Login\x12\x1a.messaging.v1.LoginRequest\x1a\x1b.messaging.v1.LoginResponse\"\x00B<Z:github.com/vl0000/gomessenger/gen/messaging/v1;messagingv1b\x06proto3"
 
 var (
 	file_messaging_v1_messaging_proto_rawDescOnce sync.Once
@@ -383,25 +596,33 @@ func file_messaging_v1_messaging_proto_rawDescGZIP() []byte {
 }
 
 var file_messaging_v1_messaging_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
-var file_messaging_v1_messaging_proto_msgTypes = make([]protoimpl.MessageInfo, 5)
+var file_messaging_v1_messaging_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_messaging_v1_messaging_proto_goTypes = []any{
 	(STATUS)(0),                       // 0: messaging.v1.STATUS
 	(*Message)(nil),                   // 1: messaging.v1.Message
-	(*SendDirectMessageRequest)(nil),  // 2: messaging.v1.SendDirectMessageRequest
-	(*GetDMsRequest)(nil),             // 3: messaging.v1.GetDMsRequest
-	(*GetDMsResponse)(nil),            // 4: messaging.v1.GetDMsResponse
-	(*SendDirectMessageResponse)(nil), // 5: messaging.v1.SendDirectMessageResponse
+	(*RegisterUserRequest)(nil),       // 2: messaging.v1.RegisterUserRequest
+	(*RegisterUserResponse)(nil),      // 3: messaging.v1.RegisterUserResponse
+	(*LoginRequest)(nil),              // 4: messaging.v1.LoginRequest
+	(*LoginResponse)(nil),             // 5: messaging.v1.LoginResponse
+	(*SendDirectMessageRequest)(nil),  // 6: messaging.v1.SendDirectMessageRequest
+	(*GetDMsRequest)(nil),             // 7: messaging.v1.GetDMsRequest
+	(*GetDMsResponse)(nil),            // 8: messaging.v1.GetDMsResponse
+	(*SendDirectMessageResponse)(nil), // 9: messaging.v1.SendDirectMessageResponse
 }
 var file_messaging_v1_messaging_proto_depIdxs = []int32{
 	1, // 0: messaging.v1.SendDirectMessageRequest.msg:type_name -> messaging.v1.Message
 	1, // 1: messaging.v1.GetDMsResponse.messages:type_name -> messaging.v1.Message
 	0, // 2: messaging.v1.SendDirectMessageResponse.content:type_name -> messaging.v1.STATUS
-	2, // 3: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
-	3, // 4: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
-	5, // 5: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
-	4, // 6: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
-	5, // [5:7] is the sub-list for method output_type
-	3, // [3:5] is the sub-list for method input_type
+	6, // 3: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
+	7, // 4: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
+	2, // 5: messaging.v1.MessagingService.RegisterUser:input_type -> messaging.v1.RegisterUserRequest
+	4, // 6: messaging.v1.MessagingService.Login:input_type -> messaging.v1.LoginRequest
+	9, // 7: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
+	8, // 8: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
+	3, // 9: messaging.v1.MessagingService.RegisterUser:output_type -> messaging.v1.RegisterUserResponse
+	5, // 10: messaging.v1.MessagingService.Login:output_type -> messaging.v1.LoginResponse
+	7, // [7:11] is the sub-list for method output_type
+	3, // [3:7] is the sub-list for method input_type
 	3, // [3:3] is the sub-list for extension type_name
 	3, // [3:3] is the sub-list for extension extendee
 	0, // [0:3] is the sub-list for field type_name
@@ -419,7 +640,7 @@ func file_messaging_v1_messaging_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_messaging_v1_messaging_proto_rawDesc), len(file_messaging_v1_messaging_proto_rawDesc)),
 			NumEnums:      1,
-			NumMessages:   5,
+			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

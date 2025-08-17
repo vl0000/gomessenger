@@ -14,3 +14,11 @@ CREATE TABLE IF NOT EXISTS "messages" (
   FOREIGN KEY("sender") REFERENCES users("phone_number"),
   FOREIGN KEY("receiver") REFERENCES users("phone_number")
 );
+
+CREATE TABLE IF NOT EXISTS "users" (
+  "id" INTEGER NOT NULL UNIQUE,
+  "username" TEXT NOT NULL,
+  "password" TEXT NOT NULL,
+  "salt" TEXT NOT NULL,
+  PRIMARY KEY("id" AUTOINCREMENT)
+);

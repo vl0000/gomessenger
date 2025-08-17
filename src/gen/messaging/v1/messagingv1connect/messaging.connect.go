@@ -38,12 +38,19 @@ const (
 	MessagingServiceSendDirectMessageProcedure = "/messaging.v1.MessagingService/SendDirectMessage"
 	// MessagingServiceGetDMsProcedure is the fully-qualified name of the MessagingService's GetDMs RPC.
 	MessagingServiceGetDMsProcedure = "/messaging.v1.MessagingService/GetDMs"
+	// MessagingServiceRegisterUserProcedure is the fully-qualified name of the MessagingService's
+	// RegisterUser RPC.
+	MessagingServiceRegisterUserProcedure = "/messaging.v1.MessagingService/RegisterUser"
+	// MessagingServiceLoginProcedure is the fully-qualified name of the MessagingService's Login RPC.
+	MessagingServiceLoginProcedure = "/messaging.v1.MessagingService/Login"
 )
 
 // MessagingServiceClient is a client for the messaging.v1.MessagingService service.
 type MessagingServiceClient interface {
 	SendDirectMessage(context.Context, *connect.Request[v1.SendDirectMessageRequest]) (*connect.Response[v1.SendDirectMessageResponse], error)
 	GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error)
+	RegisterUser(context.Context, *connect.Request[v1.RegisterUserRequest]) (*connect.Response[v1.RegisterUserResponse], error)
+	Login(context.Context, *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error)
 }
 
 // NewMessagingServiceClient constructs a client for the messaging.v1.MessagingService service. By
@@ -69,6 +76,18 @@ func NewMessagingServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(messagingServiceMethods.ByName("GetDMs")),
 			connect.WithClientOptions(opts...),
 		),
+		registerUser: connect.NewClient[v1.RegisterUserRequest, v1.RegisterUserResponse](
+			httpClient,
+			baseURL+MessagingServiceRegisterUserProcedure,
+			connect.WithSchema(messagingServiceMethods.ByName("RegisterUser")),
+			connect.WithClientOptions(opts...),
+		),
+		login: connect.NewClient[v1.LoginRequest, v1.LoginResponse](
+			httpClient,
+			baseURL+MessagingServiceLoginProcedure,
+			connect.WithSchema(messagingServiceMethods.ByName("Login")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -76,6 +95,8 @@ func NewMessagingServiceClient(httpClient connect.HTTPClient, baseURL string, op
 type messagingServiceClient struct {
 	sendDirectMessage *connect.Client[v1.SendDirectMessageRequest, v1.SendDirectMessageResponse]
 	getDMs            *connect.Client[v1.GetDMsRequest, v1.GetDMsResponse]
+	registerUser      *connect.Client[v1.RegisterUserRequest, v1.RegisterUserResponse]
+	login             *connect.Client[v1.LoginRequest, v1.LoginResponse]
 }
 
 // SendDirectMessage calls messaging.v1.MessagingService.SendDirectMessage.
@@ -88,10 +109,22 @@ func (c *messagingServiceClient) GetDMs(ctx context.Context, req *connect.Reques
 	return c.getDMs.CallUnary(ctx, req)
 }
 
+// RegisterUser calls messaging.v1.MessagingService.RegisterUser.
+func (c *messagingServiceClient) RegisterUser(ctx context.Context, req *connect.Request[v1.RegisterUserRequest]) (*connect.Response[v1.RegisterUserResponse], error) {
+	return c.registerUser.CallUnary(ctx, req)
+}
+
+// Login calls messaging.v1.MessagingService.Login.
+func (c *messagingServiceClient) Login(ctx context.Context, req *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error) {
+	return c.login.CallUnary(ctx, req)
+}
+
 // MessagingServiceHandler is an implementation of the messaging.v1.MessagingService service.
 type MessagingServiceHandler interface {
 	SendDirectMessage(context.Context, *connect.Request[v1.SendDirectMessageRequest]) (*connect.Response[v1.SendDirectMessageResponse], error)
 	GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error)
+	RegisterUser(context.Context, *connect.Request[v1.RegisterUserRequest]) (*connect.Response[v1.RegisterUserResponse], error)
+	Login(context.Context, *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error)
 }
 
 // NewMessagingServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -113,12 +146,28 @@ func NewMessagingServiceHandler(svc MessagingServiceHandler, opts ...connect.Han
 		connect.WithSchema(messagingServiceMethods.ByName("GetDMs")),
 		connect.WithHandlerOptions(opts...),
 	)
+	messagingServiceRegisterUserHandler := connect.NewUnaryHandler(
+		MessagingServiceRegisterUserProcedure,
+		svc.RegisterUser,
+		connect.WithSchema(messagingServiceMethods.ByName("RegisterUser")),
+		connect.WithHandlerOptions(opts...),
+	)
+	messagingServiceLoginHandler := connect.NewUnaryHandler(
+		MessagingServiceLoginProcedure,
+		svc.Login,
+		connect.WithSchema(messagingServiceMethods.ByName("Login")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/messaging.v1.MessagingService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MessagingServiceSendDirectMessageProcedure:
 			messagingServiceSendDirectMessageHandler.ServeHTTP(w, r)
 		case MessagingServiceGetDMsProcedure:
 			messagingServiceGetDMsHandler.ServeHTTP(w, r)
+		case MessagingServiceRegisterUserProcedure:
+			messagingServiceRegisterUserHandler.ServeHTTP(w, r)
+		case MessagingServiceLoginProcedure:
+			messagingServiceLoginHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -134,4 +183,12 @@ func (UnimplementedMessagingServiceHandler) SendDirectMessage(context.Context, *
 
 func (UnimplementedMessagingServiceHandler) GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("messaging.v1.MessagingService.GetDMs is not implemented"))
+}
+
+func (UnimplementedMessagingServiceHandler) RegisterUser(context.Context, *connect.Request[v1.RegisterUserRequest]) (*connect.Response[v1.RegisterUserResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("messaging.v1.MessagingService.RegisterUser is not implemented"))
+}
+
+func (UnimplementedMessagingServiceHandler) Login(context.Context, *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("messaging.v1.MessagingService.Login is not implemented"))
 }

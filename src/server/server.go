@@ -27,14 +27,14 @@ const (
 )
 
 type MessagingServer struct {
-	Addr       string
-	Router     *chi.Mux
-	Db         *sql.DB
-	token_auth *jwtauth.JWTAuth
+	Addr      string
+	Router    *chi.Mux
+	Db        *sql.DB
+	TokenAuth *jwtauth.JWTAuth
 }
 
 func (s *MessagingServer) Start() {
-	s.token_auth = jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil)
+	s.TokenAuth = jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil)
 	log.Printf("Starting server in address: %s", s.Addr)
 	http.ListenAndServe(s.Addr, h2c.NewHandler(s.Router, &http2.Server{}))
 }
@@ -135,7 +135,7 @@ func (s *MessagingServer) RegisterUser(
 		}), err
 	}
 
-	_, jwt_str, err := s.token_auth.Encode(map[string]interface{}{
+	_, jwt_str, err := s.TokenAuth.Encode(map[string]interface{}{
 		"username":     req.Msg.Username,
 		"phone_number": req.Msg.PhoneNumber,
 		"iat":          time.Now().Unix(),
@@ -171,15 +171,14 @@ func (s *MessagingServer) Login(
 	defer q.Close()
 
 	if q.Next() {
-		var id int
 		var stored_password, phone_number, username, salt string
 
-		q.Scan(&id, &username, &phone_number, &stored_password, &salt)
+		q.Scan(&username, &phone_number, &stored_password, &salt)
 		hashed_password, err := pbkdf2.Key(sha512.New, req.Msg.Password, []byte(salt), PBKDF_ITER, PBKDF_KEY_LEN)
 
 		if err == nil || string(hashed_password) == stored_password {
 
-			_, jwt_str, err := s.token_auth.Encode(map[string]interface{}{
+			_, jwt_str, err := s.TokenAuth.Encode(map[string]interface{}{
 				"username":     username,
 				"phone_number": phone_number,
 				"iat":          time.Now().Unix(),

@@ -5,10 +5,12 @@ import (
 	"crypto/pbkdf2"
 	"crypto/rand"
 	"crypto/sha512"
+	"fmt"
 	"os"
 	"testing"
 
 	"connectrpc.com/connect"
+	"github.com/go-chi/jwtauth/v5"
 	"github.com/vl0000/gomessenger/data"
 	messagingv1 "github.com/vl0000/gomessenger/gen/messaging/v1"
 	"github.com/vl0000/gomessenger/server"
@@ -16,14 +18,16 @@ import (
 
 func newTestingServer() (*server.MessagingServer, error) {
 
+	os.Remove("./testing.db")
 	os.Setenv("DB_SCHEMA_PATH", "./../data/database.sql")
 	db, err := data.SetupTestDatabase("./testing.db")
-	if err != nil {
-		return nil, err
+	if err != nil || db == nil {
+		return nil, fmt.Errorf("DATABASE ERROR >>%s", err)
 	}
 	return &server.MessagingServer{
-		Addr: "localhost:3000",
-		Db:   db,
+		Addr:      "localhost:3000",
+		Db:        db,
+		TokenAuth: jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil),
 	}, nil
 }
 
@@ -55,6 +59,7 @@ func TestServer(t *testing.T) {
 
 	t.Run("Login requests", func(t *testing.T) {
 
+		// A SECRET KEY MUST BE SET FOR THIS TEST TO RUN CORRECTLY!!!
 		const (
 			PBKDF_KEY_LEN int = 32
 			PBKDF_ITER    int = 16384
@@ -87,6 +92,26 @@ func TestServer(t *testing.T) {
 		// END SETUP
 
 		_, err = s.Login(context.TODO(), connect.NewRequest(&req))
+		if err != nil {
+			t.Fatal(err)
+		}
+		os.Remove("./testing.db")
+	})
+
+	t.Run("Registers user", func(t *testing.T) {
+		// SETUP
+		// A SECRET_KEY MUST BE SET FOR THIS TEST TO RUN CORRECTLY!!!
+		s, err := newTestingServer()
+		if err != nil {
+			t.Fatal(err)
+		}
+		req := connect.NewRequest(&messagingv1.RegisterUserRequest{
+			Username:    "John Doe",
+			PhoneNumber: "123-456",
+			Password:    "12345678",
+		})
+
+		_, err = s.RegisterUser(context.TODO(), req)
 		if err != nil {
 			t.Fatal(err)
 		}

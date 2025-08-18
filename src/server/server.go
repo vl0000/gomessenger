@@ -21,6 +21,11 @@ import (
 	"golang.org/x/net/http2/h2c"
 )
 
+const (
+	PBKDF_KEY_LEN int = 32
+	PBKDF_ITER    int = 16384
+)
+
 type MessagingServer struct {
 	Addr       string
 	Router     *chi.Mux
@@ -108,14 +113,14 @@ func (s *MessagingServer) RegisterUser(
 	salt := make([]byte, 24)
 	rand.Read(salt)
 
-	hashed_password, err := pbkdf2.Key(sha512.New, req.Msg.Password, salt, 16384, 32)
+	hashed_password, err := pbkdf2.Key(sha512.New, req.Msg.Password, salt, PBKDF_ITER, PBKDF_KEY_LEN)
 	if err != nil {
 		return connect.NewResponse(&messagingv1.RegisterUserResponse{
 			Status: *messagingv1.STATUS_STATUS_FAILURE.Enum(),
 		}), err
 	}
 
-	_, err = s.Db.Query(`INSERT INTO users (
+	_, err = s.Db.Exec(`INSERT INTO users (
 		username,phone_number, password, salt)
 		VALUES(?, ?, ?, ?);`,
 		req.Msg.Username,
@@ -133,6 +138,7 @@ func (s *MessagingServer) RegisterUser(
 	_, jwt_str, err := s.token_auth.Encode(map[string]interface{}{
 		"username":     req.Msg.Username,
 		"phone_number": req.Msg.PhoneNumber,
+		"iat":          time.Now().Unix(),
 		"exp":          time.Now().Add(480 * time.Hour).Unix(),
 	})
 	if err != nil {
@@ -145,4 +151,53 @@ func (s *MessagingServer) RegisterUser(
 		Status:   *messagingv1.STATUS_STATUS_SUCCESS.Enum(),
 		JwtToken: &jwt_str,
 	}), nil
+}
+
+func (s *MessagingServer) Login(
+	ctx context.Context,
+	req *connect.Request[messagingv1.LoginRequest],
+) (*connect.Response[messagingv1.LoginResponse], error) {
+
+	q, err := s.Db.Query(`
+		SELECT FIRST FROM users WHERE phone_number = ?;`,
+		req.Msg.PhoneNumber,
+	)
+	if err != nil {
+		return connect.NewResponse(&messagingv1.LoginResponse{
+			Status: *messagingv1.STATUS_STATUS_FAILURE.Enum(),
+		}), err
+	}
+
+	defer q.Close()
+
+	if q.Next() {
+		var id int
+		var stored_password, phone_number, username, salt string
+
+		q.Scan(&id, &username, &phone_number, &stored_password, &salt)
+		hashed_password, err := pbkdf2.Key(sha512.New, req.Msg.Password, []byte(salt), PBKDF_ITER, PBKDF_KEY_LEN)
+
+		if err == nil || string(hashed_password) == stored_password {
+
+			_, jwt_str, err := s.token_auth.Encode(map[string]interface{}{
+				"username":     username,
+				"phone_number": phone_number,
+				"iat":          time.Now().Unix(),
+				"exp":          time.Now().Add(480 * time.Hour).Unix(),
+			})
+			if err != nil {
+				return nil, err
+			}
+			return connect.NewResponse(&messagingv1.LoginResponse{
+				Status:   *messagingv1.STATUS_STATUS_SUCCESS.Enum(),
+				JwtToken: &jwt_str,
+			}), nil
+
+		} else {
+			return nil, err
+		}
+
+	}
+
+	return nil, err
 }

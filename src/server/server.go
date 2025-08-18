@@ -73,7 +73,7 @@ func (s *MessagingServer) GetDMs(
 	rows, err := s.Db.Query(`SELECT * FROM messages WHERE
 			sender IN (?, ?) AND receiver IN (?, ?) AND
 			timestamp BETWEEN ? AND datetime('now')
-			;`, req.Msg.Sender, req.Msg.Receiver, req.Msg.FromDate)
+			;`, req.Msg.Sender, req.Msg.Receiver, req.Msg.Receiver, req.Msg.Sender, req.Msg.FromDate)
 
 	if err != nil {
 		return res, fmt.Errorf("GetDMs()\n\t%s", err)

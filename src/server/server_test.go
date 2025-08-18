@@ -8,6 +8,7 @@ import (
 	"fmt"
 	"os"
 	"testing"
+	"time"
 
 	"connectrpc.com/connect"
 	"github.com/go-chi/jwtauth/v5"
@@ -40,11 +41,13 @@ func TestServer(t *testing.T) {
 				Content:  "Hello!!!",
 			},
 		}
+		// SETUP
 		s, err := newTestingServer()
 		if err != nil {
 			t.Fatal(err)
 		}
 
+		// END SETUP
 		req := connect.NewRequest(&message_req)
 		s.SendDirectMessage(context.TODO(), req)
 		q, err := s.Db.Query("SELECT * FROM messages WHERE sender = '123-456';")
@@ -55,6 +58,34 @@ func TestServer(t *testing.T) {
 			t.Fatal("Message not found in DB")
 		}
 		os.Remove("./testing.db")
+	})
+
+	t.Run("Messages can be retrieved from DB", func(t *testing.T) {
+
+		// SETUP
+		s, err := newTestingServer()
+		if err != nil {
+			t.Fatal(err)
+		}
+		req := connect.NewRequest(&messagingv1.GetDMsRequest{
+			Sender:   "123-456",
+			Receiver: "654-321",
+			FromDate: time.Now().Add(-24 * time.Hour).Format(time.DateTime),
+		})
+		_, err = s.Db.Exec(`INSERT INTO messages (sender, receiver, content, timestamp) VALUES
+			(?, ?, ?, datetime('now'));
+			`, req.Msg.Sender, req.Msg.Receiver, "Hello, World!")
+		if err != nil {
+			t.Fatal(err)
+		}
+		// END SETUP
+
+		res, err := s.GetDMs(context.TODO(), req)
+		if err != nil {
+			t.Fatal(err)
+		} else if len(res.Msg.GetMessages()) == 0 {
+			t.Fatalf("No messages returned")
+		}
 	})
 
 	t.Run("Login requests", func(t *testing.T) {
@@ -110,6 +141,7 @@ func TestServer(t *testing.T) {
 			PhoneNumber: "123-456",
 			Password:    "12345678",
 		})
+		// END SETUP
 
 		_, err = s.RegisterUser(context.TODO(), req)
 		if err != nil {

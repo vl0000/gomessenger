@@ -208,7 +208,8 @@ func (x *RegisterUserRequest) GetPassword() string {
 
 type RegisterUserResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	JwtToken      string                 `protobuf:"bytes,1,opt,name=jwt_token,json=jwtToken,proto3" json:"jwt_token,omitempty"`
+	JwtToken      *string                `protobuf:"bytes,1,opt,name=jwt_token,json=jwtToken,proto3,oneof" json:"jwt_token,omitempty"`
+	Status        STATUS                 `protobuf:"varint,2,opt,name=status,proto3,enum=messaging.v1.STATUS" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -244,10 +245,17 @@ func (*RegisterUserResponse) Descriptor() ([]byte, []int) {
 }
 
 func (x *RegisterUserResponse) GetJwtToken() string {
-	if x != nil {
-		return x.JwtToken
+	if x != nil && x.JwtToken != nil {
+		return *x.JwtToken
 	}
 	return ""
+}
+
+func (x *RegisterUserResponse) GetStatus() STATUS {
+	if x != nil {
+		return x.Status
+	}
+	return STATUS_STATUS_UNSPECIFIED
 }
 
 type LoginRequest struct {
@@ -304,7 +312,8 @@ func (x *LoginRequest) GetPassword() string {
 
 type LoginResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	JwtToken      string                 `protobuf:"bytes,1,opt,name=jwt_token,json=jwtToken,proto3" json:"jwt_token,omitempty"`
+	JwtToken      *string                `protobuf:"bytes,1,opt,name=jwt_token,json=jwtToken,proto3,oneof" json:"jwt_token,omitempty"`
+	Status        STATUS                 `protobuf:"varint,2,opt,name=status,proto3,enum=messaging.v1.STATUS" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -340,10 +349,17 @@ func (*LoginResponse) Descriptor() ([]byte, []int) {
 }
 
 func (x *LoginResponse) GetJwtToken() string {
-	if x != nil {
-		return x.JwtToken
+	if x != nil && x.JwtToken != nil {
+		return *x.JwtToken
 	}
 	return ""
+}
+
+func (x *LoginResponse) GetStatus() STATUS {
+	if x != nil {
+		return x.Status
+	}
+	return STATUS_STATUS_UNSPECIFIED
 }
 
 type SendDirectMessageRequest struct {
@@ -496,7 +512,7 @@ func (x *GetDMsResponse) GetMessages() []*Message {
 
 type SendDirectMessageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Content       STATUS                 `protobuf:"varint,1,opt,name=content,proto3,enum=messaging.v1.STATUS" json:"content,omitempty"`
+	Status        STATUS                 `protobuf:"varint,1,opt,name=status,proto3,enum=messaging.v1.STATUS" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -531,9 +547,9 @@ func (*SendDirectMessageResponse) Descriptor() ([]byte, []int) {
 	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *SendDirectMessageResponse) GetContent() STATUS {
+func (x *SendDirectMessageResponse) GetStatus() STATUS {
 	if x != nil {
-		return x.Content
+		return x.Status
 	}
 	return STATUS_STATUS_UNSPECIFIED
 }
@@ -555,14 +571,20 @@ const file_messaging_v1_messaging_proto_rawDesc = "" +
 	"\x13RegisterUserRequest\x12\x1a\n" +
 	"\busername\x18\x01 \x01(\tR\busername\x12!\n" +
 	"\fphone_number\x18\x02 \x01(\tR\vphoneNumber\x12\x1a\n" +
-	"\bpassword\x18\x03 \x01(\tR\bpassword\"3\n" +
-	"\x14RegisterUserResponse\x12\x1b\n" +
-	"\tjwt_token\x18\x01 \x01(\tR\bjwtToken\"M\n" +
+	"\bpassword\x18\x03 \x01(\tR\bpassword\"t\n" +
+	"\x14RegisterUserResponse\x12 \n" +
+	"\tjwt_token\x18\x01 \x01(\tH\x00R\bjwtToken\x88\x01\x01\x12,\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x14.messaging.v1.STATUSR\x06statusB\f\n" +
+	"\n" +
+	"_jwt_token\"M\n" +
 	"\fLoginRequest\x12!\n" +
 	"\fphone_number\x18\x01 \x01(\tR\vphoneNumber\x12\x1a\n" +
-	"\bpassword\x18\x02 \x01(\tR\bpassword\",\n" +
-	"\rLoginResponse\x12\x1b\n" +
-	"\tjwt_token\x18\x01 \x01(\tR\bjwtToken\"C\n" +
+	"\bpassword\x18\x02 \x01(\tR\bpassword\"m\n" +
+	"\rLoginResponse\x12 \n" +
+	"\tjwt_token\x18\x01 \x01(\tH\x00R\bjwtToken\x88\x01\x01\x12,\n" +
+	"\x06status\x18\x02 \x01(\x0e2\x14.messaging.v1.STATUSR\x06statusB\f\n" +
+	"\n" +
+	"_jwt_token\"C\n" +
 	"\x18SendDirectMessageRequest\x12'\n" +
 	"\x03msg\x18\x01 \x01(\v2\x15.messaging.v1.MessageR\x03msg\"`\n" +
 	"\rGetDMsRequest\x12\x16\n" +
@@ -570,9 +592,9 @@ const file_messaging_v1_messaging_proto_rawDesc = "" +
 	"\breceiver\x18\x02 \x01(\tR\breceiver\x12\x1b\n" +
 	"\tfrom_date\x18\x03 \x01(\tR\bfromDate\"C\n" +
 	"\x0eGetDMsResponse\x121\n" +
-	"\bmessages\x18\x01 \x03(\v2\x15.messaging.v1.MessageR\bmessages\"K\n" +
-	"\x19SendDirectMessageResponse\x12.\n" +
-	"\acontent\x18\x01 \x01(\x0e2\x14.messaging.v1.STATUSR\acontent*H\n" +
+	"\bmessages\x18\x01 \x03(\v2\x15.messaging.v1.MessageR\bmessages\"I\n" +
+	"\x19SendDirectMessageResponse\x12,\n" +
+	"\x06status\x18\x01 \x01(\x0e2\x14.messaging.v1.STATUSR\x06status*H\n" +
 	"\x06STATUS\x12\x16\n" +
 	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x12\n" +
 	"\x0eSTATUS_SUCCESS\x10\x01\x12\x12\n" +
@@ -610,22 +632,24 @@ var file_messaging_v1_messaging_proto_goTypes = []any{
 	(*SendDirectMessageResponse)(nil), // 9: messaging.v1.SendDirectMessageResponse
 }
 var file_messaging_v1_messaging_proto_depIdxs = []int32{
-	1, // 0: messaging.v1.SendDirectMessageRequest.msg:type_name -> messaging.v1.Message
-	1, // 1: messaging.v1.GetDMsResponse.messages:type_name -> messaging.v1.Message
-	0, // 2: messaging.v1.SendDirectMessageResponse.content:type_name -> messaging.v1.STATUS
-	6, // 3: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
-	7, // 4: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
-	2, // 5: messaging.v1.MessagingService.RegisterUser:input_type -> messaging.v1.RegisterUserRequest
-	4, // 6: messaging.v1.MessagingService.Login:input_type -> messaging.v1.LoginRequest
-	9, // 7: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
-	8, // 8: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
-	3, // 9: messaging.v1.MessagingService.RegisterUser:output_type -> messaging.v1.RegisterUserResponse
-	5, // 10: messaging.v1.MessagingService.Login:output_type -> messaging.v1.LoginResponse
-	7, // [7:11] is the sub-list for method output_type
-	3, // [3:7] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0, // 0: messaging.v1.RegisterUserResponse.status:type_name -> messaging.v1.STATUS
+	0, // 1: messaging.v1.LoginResponse.status:type_name -> messaging.v1.STATUS
+	1, // 2: messaging.v1.SendDirectMessageRequest.msg:type_name -> messaging.v1.Message
+	1, // 3: messaging.v1.GetDMsResponse.messages:type_name -> messaging.v1.Message
+	0, // 4: messaging.v1.SendDirectMessageResponse.status:type_name -> messaging.v1.STATUS
+	6, // 5: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
+	7, // 6: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
+	2, // 7: messaging.v1.MessagingService.RegisterUser:input_type -> messaging.v1.RegisterUserRequest
+	4, // 8: messaging.v1.MessagingService.Login:input_type -> messaging.v1.LoginRequest
+	9, // 9: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
+	8, // 10: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
+	3, // 11: messaging.v1.MessagingService.RegisterUser:output_type -> messaging.v1.RegisterUserResponse
+	5, // 12: messaging.v1.MessagingService.Login:output_type -> messaging.v1.LoginResponse
+	9, // [9:13] is the sub-list for method output_type
+	5, // [5:9] is the sub-list for method input_type
+	5, // [5:5] is the sub-list for extension type_name
+	5, // [5:5] is the sub-list for extension extendee
+	0, // [0:5] is the sub-list for field type_name
 }
 
 func init() { file_messaging_v1_messaging_proto_init() }
@@ -634,6 +658,8 @@ func file_messaging_v1_messaging_proto_init() {
 		return
 	}
 	file_messaging_v1_messaging_proto_msgTypes[0].OneofWrappers = []any{}
+	file_messaging_v1_messaging_proto_msgTypes[2].OneofWrappers = []any{}
+	file_messaging_v1_messaging_proto_msgTypes[4].OneofWrappers = []any{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{

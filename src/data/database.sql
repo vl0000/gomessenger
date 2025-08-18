@@ -18,6 +18,7 @@ CREATE TABLE IF NOT EXISTS "messages" (
 CREATE TABLE IF NOT EXISTS "users" (
   "id" INTEGER NOT NULL UNIQUE,
   "username" TEXT NOT NULL,
+  "phone_number" TEXT NOT NULL UNIQUE,
   "password" TEXT NOT NULL,
   "salt" TEXT NOT NULL,
   PRIMARY KEY("id" AUTOINCREMENT)

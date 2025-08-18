@@ -2,25 +2,34 @@ package server
 
 import (
 	"context"
+	"crypto/pbkdf2"
+	"crypto/rand"
+	"crypto/sha512"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
+	"os"
+	"time"
 
 	"connectrpc.com/connect"
 	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/jwtauth/v5"
+
 	messagingv1 "github.com/vl0000/gomessenger/gen/messaging/v1"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
 )
 
 type MessagingServer struct {
-	Addr   string
-	Router *chi.Mux
-	Db     *sql.DB
+	Addr       string
+	Router     *chi.Mux
+	Db         *sql.DB
+	token_auth *jwtauth.JWTAuth
 }
 
 func (s *MessagingServer) Start() {
+	s.token_auth = jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil)
 	log.Printf("Starting server in address: %s", s.Addr)
 	http.ListenAndServe(s.Addr, h2c.NewHandler(s.Router, &http2.Server{}))
 }
@@ -36,13 +45,13 @@ func (s *MessagingServer) SendDirectMessage(
 
 	if err != nil || req == nil {
 		res := connect.NewResponse(&messagingv1.SendDirectMessageResponse{
-			Content: messagingv1.STATUS_STATUS_FAILURE,
+			Status: messagingv1.STATUS_STATUS_FAILURE,
 		})
 		res.Header().Set("Messaging-Version", "v1")
 		return res, fmt.Errorf("SendDirectMessage()\n\t%s", err)
 	}
 	res := connect.NewResponse(&messagingv1.SendDirectMessageResponse{
-		Content: messagingv1.STATUS_STATUS_SUCCESS,
+		Status: messagingv1.STATUS_STATUS_SUCCESS,
 	})
 	res.Header().Set("Messaging-Version", "v1")
 	return res, nil
@@ -86,4 +95,54 @@ func (s *MessagingServer) GetDMs(
 			})
 	}
 	return res, nil
+}
+
+func (s *MessagingServer) RegisterUser(
+	ctx context.Context,
+	req *connect.Request[messagingv1.RegisterUserRequest],
+) (
+	*connect.Response[messagingv1.RegisterUserResponse],
+	error,
+) {
+
+	salt := make([]byte, 24)
+	rand.Read(salt)
+
+	hashed_password, err := pbkdf2.Key(sha512.New, req.Msg.Password, salt, 16384, 32)
+	if err != nil {
+		return connect.NewResponse(&messagingv1.RegisterUserResponse{
+			Status: *messagingv1.STATUS_STATUS_FAILURE.Enum(),
+		}), err
+	}
+
+	_, err = s.Db.Query(`INSERT INTO users (
+		username,phone_number, password, salt)
+		VALUES(?, ?, ?, ?);`,
+		req.Msg.Username,
+		req.Msg.PhoneNumber,
+		hashed_password,
+		string(salt),
+	)
+
+	if err != nil {
+		return connect.NewResponse(&messagingv1.RegisterUserResponse{
+			Status: *messagingv1.STATUS_STATUS_FAILURE.Enum(),
+		}), err
+	}
+
+	_, jwt_str, err := s.token_auth.Encode(map[string]interface{}{
+		"username":     req.Msg.Username,
+		"phone_number": req.Msg.PhoneNumber,
+		"exp":          time.Now().Add(480 * time.Hour).Unix(),
+	})
+	if err != nil {
+		return connect.NewResponse(&messagingv1.RegisterUserResponse{
+			Status: *messagingv1.STATUS_STATUS_FAILURE.Enum(),
+		}), err
+	}
+
+	return connect.NewResponse(&messagingv1.RegisterUserResponse{
+		Status:   *messagingv1.STATUS_STATUS_SUCCESS.Enum(),
+		JwtToken: &jwt_str,
+	}), nil
 }

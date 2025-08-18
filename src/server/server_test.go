@@ -2,7 +2,9 @@ package server_test
 
 import (
 	"context"
-	"fmt"
+	"crypto/pbkdf2"
+	"crypto/rand"
+	"crypto/sha512"
 	"os"
 	"testing"
 
@@ -12,24 +14,21 @@ import (
 	"github.com/vl0000/gomessenger/server"
 )
 
+func newTestingServer() (*server.MessagingServer, error) {
+
+	os.Setenv("DB_SCHEMA_PATH", "./../data/database.sql")
+	db, err := data.SetupTestDatabase("./testing.db")
+	if err != nil {
+		return nil, err
+	}
+	return &server.MessagingServer{
+		Addr: "localhost:3000",
+		Db:   db,
+	}, nil
+}
+
 func TestServer(t *testing.T) {
 	t.Run("Message persists in db", func(t *testing.T) {
-		os.Setenv("DB_SCHEMA_PATH", "./../data/database.sql")
-		fmt.Println("Start")
-		db, err := data.SetupTestDatabase("./testing.db")
-		fmt.Println("DB setup")
-		if err != nil {
-			t.Fatalf("Could not setup testing database\n\t%s", err)
-		}
-		if db == nil {
-			t.Fatal("DB is a nil pointer")
-		}
-
-		fmt.Println("Context")
-		s := server.MessagingServer{
-			Addr: "localhost:3000",
-			Db:   db,
-		}
 		message_req := messagingv1.SendDirectMessageRequest{
 			Msg: &messagingv1.Message{
 				Sender:   "123-456",
@@ -37,10 +36,14 @@ func TestServer(t *testing.T) {
 				Content:  "Hello!!!",
 			},
 		}
+		s, err := newTestingServer()
+		if err != nil {
+			t.Fatal(err)
+		}
 
 		req := connect.NewRequest(&message_req)
 		s.SendDirectMessage(context.TODO(), req)
-		q, err := db.Query("SELECT * FROM messages WHERE sender = '123-456';")
+		q, err := s.Db.Query("SELECT * FROM messages WHERE sender = '123-456';")
 		if err != nil {
 			t.Fatal(err)
 		}
@@ -49,4 +52,45 @@ func TestServer(t *testing.T) {
 		}
 		os.Remove("./testing.db")
 	})
+
+	t.Run("Login requests", func(t *testing.T) {
+
+		const (
+			PBKDF_KEY_LEN int = 32
+			PBKDF_ITER    int = 16384
+		)
+
+		req := messagingv1.LoginRequest{
+			PhoneNumber: "123-456",
+			Password:    "123456",
+		}
+
+		// SETUP
+		s, err := newTestingServer()
+		if err != nil {
+			t.Fatal(err)
+		}
+
+		salt := make([]byte, 24)
+		rand.Read(salt)
+
+		hashed_password, err := pbkdf2.Key(sha512.New, req.PhoneNumber, salt, PBKDF_ITER, PBKDF_KEY_LEN)
+
+		_, err = s.Db.Exec(`INSERT INTO users (
+			username,phone_number, password, salt)
+			VALUES(?, ?, ?, ?);`,
+			"John Doe",
+			req.PhoneNumber,
+			hashed_password,
+			string(salt),
+		)
+		// END SETUP
+
+		_, err = s.Login(context.TODO(), connect.NewRequest(&req))
+		if err != nil {
+			t.Fatal(err)
+		}
+		os.Remove("./testing.db")
+	})
+
 }

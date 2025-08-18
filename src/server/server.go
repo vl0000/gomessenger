@@ -159,7 +159,7 @@ func (s *MessagingServer) Login(
 ) (*connect.Response[messagingv1.LoginResponse], error) {
 
 	q, err := s.Db.Query(`
-		SELECT FIRST FROM users WHERE phone_number = ?;`,
+		SELECT * FROM users WHERE phone_number = ? LIMIT 1;`,
 		req.Msg.PhoneNumber,
 	)
 	if err != nil {

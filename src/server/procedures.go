@@ -50,7 +50,7 @@ func DoRegisterUserWork(
 	}
 
 	return &messagingv1.RegisterUserResponse{
-		JwtToken: &jwt_str,
+		JwtToken: jwt_str,
 	}, nil
 }
 
@@ -85,8 +85,7 @@ func DoLoginWork(
 			}
 
 			return &messagingv1.LoginResponse{
-				Status:   *messagingv1.STATUS_STATUS_SUCCESS.Enum(),
-				JwtToken: &jwt_str,
+				JwtToken: jwt_str,
 			}, nil
 
 		}

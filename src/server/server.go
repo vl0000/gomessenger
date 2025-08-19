@@ -2,15 +2,11 @@ package server
 
 import (
 	"context"
-	"crypto/pbkdf2"
-	"crypto/rand"
-	"crypto/sha512"
 	"database/sql"
 	"fmt"
 	"log"
 	"net/http"
 	"os"
-	"time"
 
 	"connectrpc.com/connect"
 	"github.com/go-chi/chi/v5"
@@ -19,11 +15,6 @@ import (
 	messagingv1 "github.com/vl0000/gomessenger/gen/messaging/v1"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
-)
-
-const (
-	PBKDF_KEY_LEN int = 32
-	PBKDF_ITER    int = 16384
 )
 
 type MessagingServer struct {
@@ -110,47 +101,20 @@ func (s *MessagingServer) RegisterUser(
 	error,
 ) {
 
-	salt := make([]byte, 24)
-	rand.Read(salt)
-
-	hashed_password, err := pbkdf2.Key(sha512.New, req.Msg.Password, salt, PBKDF_ITER, PBKDF_KEY_LEN)
-	if err != nil {
-		return connect.NewResponse(&messagingv1.RegisterUserResponse{
-			Status: *messagingv1.STATUS_STATUS_FAILURE.Enum(),
-		}), err
+	if err := ctx.Err(); err != nil {
+		return nil, err
 	}
 
-	_, err = s.Db.Exec(`INSERT INTO users (
-		username,phone_number, password, salt)
-		VALUES(?, ?, ?, ?);`,
-		req.Msg.Username,
-		req.Msg.PhoneNumber,
-		hashed_password,
-		string(salt),
-	)
-
-	if err != nil {
-		return connect.NewResponse(&messagingv1.RegisterUserResponse{
-			Status: *messagingv1.STATUS_STATUS_FAILURE.Enum(),
-		}), err
+	if err := ValidateRegistrationRequest(req.Msg); err != nil {
+		return nil, err
 	}
 
-	_, jwt_str, err := s.TokenAuth.Encode(map[string]interface{}{
-		"username":     req.Msg.Username,
-		"phone_number": req.Msg.PhoneNumber,
-		"iat":          time.Now().Unix(),
-		"exp":          time.Now().Add(480 * time.Hour).Unix(),
-	})
+	response, err := DoRegisterUserWork(s.Db, s.TokenAuth, ctx, req.Msg)
 	if err != nil {
-		return connect.NewResponse(&messagingv1.RegisterUserResponse{
-			Status: *messagingv1.STATUS_STATUS_FAILURE.Enum(),
-		}), err
+		return nil, err
 	}
+	return connect.NewResponse(response), nil
 
-	return connect.NewResponse(&messagingv1.RegisterUserResponse{
-		Status:   *messagingv1.STATUS_STATUS_SUCCESS.Enum(),
-		JwtToken: &jwt_str,
-	}), nil
 }
 
 func (s *MessagingServer) Login(
@@ -158,45 +122,18 @@ func (s *MessagingServer) Login(
 	req *connect.Request[messagingv1.LoginRequest],
 ) (*connect.Response[messagingv1.LoginResponse], error) {
 
-	q, err := s.Db.Query(`
-		SELECT * FROM users WHERE phone_number = ? LIMIT 1;`,
-		req.Msg.PhoneNumber,
-	)
+	if err := ctx.Err(); err != nil {
+		return nil, err
+	}
+
+	if err := ValidateLoginRequest(req.Msg); err != nil {
+		return nil, err
+	}
+
+	response, err := DoLoginWork(s.Db, s.TokenAuth, ctx, req.Msg)
 	if err != nil {
-		return connect.NewResponse(&messagingv1.LoginResponse{
-			Status: *messagingv1.STATUS_STATUS_FAILURE.Enum(),
-		}), err
+		return nil, err
 	}
+	return connect.NewResponse(response), nil
 
-	defer q.Close()
-
-	if q.Next() {
-		var stored_password, phone_number, username, salt string
-
-		q.Scan(&username, &phone_number, &stored_password, &salt)
-		hashed_password, err := pbkdf2.Key(sha512.New, req.Msg.Password, []byte(salt), PBKDF_ITER, PBKDF_KEY_LEN)
-
-		if err == nil || string(hashed_password) == stored_password {
-
-			_, jwt_str, err := s.TokenAuth.Encode(map[string]interface{}{
-				"username":     username,
-				"phone_number": phone_number,
-				"iat":          time.Now().Unix(),
-				"exp":          time.Now().Add(480 * time.Hour).Unix(),
-			})
-			if err != nil {
-				return nil, err
-			}
-			return connect.NewResponse(&messagingv1.LoginResponse{
-				Status:   *messagingv1.STATUS_STATUS_SUCCESS.Enum(),
-				JwtToken: &jwt_str,
-			}), nil
-
-		} else {
-			return nil, err
-		}
-
-	}
-
-	return nil, err
 }

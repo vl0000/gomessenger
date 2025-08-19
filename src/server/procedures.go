@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"errors"
 
+	"connectrpc.com/connect"
 	"github.com/go-chi/jwtauth/v5"
 	messagingv1 "github.com/vl0000/gomessenger/gen/messaging/v1"
 )
@@ -105,10 +106,50 @@ func DoSendDirectMessageWork(
 		`, msg.Msg.Sender, msg.Msg.Receiver, msg.Msg.Receiver, msg.Msg.Content)
 
 	if err != nil {
-		return nil, err
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
 	return &messagingv1.SendDirectMessageResponse{
 		Status: messagingv1.STATUS_STATUS_SUCCESS,
 	}, nil
+}
+
+func DoGetDMsWork(
+	db *sql.DB,
+	ctx context.Context,
+	msg *messagingv1.GetDMsRequest,
+) (*messagingv1.GetDMsResponse, error) {
+	res := &messagingv1.GetDMsResponse{}
+
+	rows, err := db.Query(`SELECT * FROM messages WHERE
+			sender IN (?, ?) AND receiver IN (?, ?) AND
+			timestamp BETWEEN ? AND datetime('now')
+			;`, msg.Sender, msg.Receiver, msg.Receiver, msg.Sender, msg.FromDate)
+
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnknown, err)
+	}
+
+	defer rows.Close()
+
+	for rows.Next() {
+		var id uint64
+		var sender, receiver, content, timestamp string
+		err := rows.Scan(&id, &sender, &receiver, &content, &timestamp)
+
+		if err != nil {
+			return res, connect.NewError(connect.CodeUnknown, err)
+		}
+
+		res.Messages = append(
+			res.Messages,
+			&messagingv1.Message{
+				Id:        &id,
+				Sender:    sender,
+				Receiver:  receiver,
+				Content:   content,
+				Timestamp: &timestamp,
+			})
+	}
+	return res, nil
 }

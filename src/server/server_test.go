@@ -81,10 +81,11 @@ func TestServer(t *testing.T) {
 		}
 		// END SETUP
 
-		res, err := s.GetDMs(context.TODO(), req)
+		// Bypass JWT
+		res, err := server.DoGetDMsWork(s.Db, context.TODO(), req.Msg)
 		if err != nil {
 			t.Fatal(err)
-		} else if len(res.Msg.GetMessages()) == 0 {
+		} else if len(res.GetMessages()) == 0 {
 			t.Fatalf("No messages returned")
 		}
 	})

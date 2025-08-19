@@ -3,7 +3,6 @@ package server
 import (
 	"context"
 	"database/sql"
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -64,40 +63,23 @@ func (s *MessagingServer) GetDMs(
 	ctx context.Context,
 	req *connect.Request[messagingv1.GetDMsRequest],
 ) (*connect.Response[messagingv1.GetDMsResponse], error) {
-	log.Println("Retrieve DMS")
-	res := connect.NewResponse(&messagingv1.GetDMsResponse{})
-	res.Header().Set("Messaging-Version", "v1")
-
-	rows, err := s.Db.Query(`SELECT * FROM messages WHERE
-			sender IN (?, ?) AND receiver IN (?, ?) AND
-			timestamp BETWEEN ? AND datetime('now')
-			;`, req.Msg.Sender, req.Msg.Receiver, req.Msg.Receiver, req.Msg.Sender, req.Msg.FromDate)
-
+	// Verify JWT
+	jwt_str := req.Header().Get("Authorization")
+	token, err := s.TokenAuth.Decode(strings.TrimPrefix("bearer ", jwt_str))
 	if err != nil {
-		return res, fmt.Errorf("GetDMs()\n\t%s", err)
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
-	defer rows.Close()
-
-	for rows.Next() {
-		var id uint64
-		var sender, receiver, content, timestamp string
-		err := rows.Scan(&id, &sender, &receiver, &content, &timestamp)
-
-		if err != nil {
-			return res, fmt.Errorf("GetDMs()\n\t%s", err)
-		}
-		res.Msg.Messages = append(
-			res.Msg.Messages,
-			&messagingv1.Message{
-				Id:        &id,
-				Sender:    sender,
-				Receiver:  receiver,
-				Content:   content,
-				Timestamp: &timestamp,
-			})
+	exists, err := CheckUserExists(s.Db, token.Subject())
+	if err != nil || !exists {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
-	return res, nil
+
+	res, err := DoGetDMsWork(s.Db, ctx, req.Msg)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnknown, err)
+	}
+	return connect.NewResponse(res), nil
 }
 
 func (s *MessagingServer) RegisterUser(

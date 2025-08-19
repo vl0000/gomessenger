@@ -1,5 +1,5 @@
 # GoMessenger
-*last updated:* 2025/08/14
+*last updated:* 2025/08/19
 
 ## Overview
 This small messaging app is intended to showcase my ability to use Golang to deliver software all by myself.
@@ -29,8 +29,8 @@ One thing to be noted is that the phone number in the "users" table won't be an 
 ### Database Queries
 #### Retrieving chat messages between two users:
 ```sql
-SELECT * FROM messages 
-WHERE receiver in (?, ?) AND sender in (?, ?) 
+SELECT * FROM messages
+WHERE receiver in (?, ?) AND sender in (?, ?)
 AND timestamp BETWEEN ? AND datetime('now');
 ```
 
@@ -44,29 +44,3 @@ INSERT INTO messages(
 sender, receiver, content, timestamp
 ) VALUES ( ?, ?, ?, datetime('now'));
 ```
-
-## API
-As of the last update. The API will only support 2 procedures. They are defined in "src/protos/messaging.proto".
-
-### SendMessage(SendMessageRequest) (Result)
-**Message**'s fields are defined as such:
-
-|        Name        |       Type         |   Description      |
-|--------------------|--------------------|--------------------|
-|        id          |       uint64       |The message's row id|
-|      sender        |       string       |The sender's "phone"|
-|     receiver       |       string       |The receiver's "phone"|
-|      content       |       string       | The actual message |
-
-The send message function will be used for exclusively 1-on-1 messages.
-The front end will receive a response to inform it of the tasks success or failure.
-
-**Result** contains a single field  "content" with an "STATUS" defined as:
-
-|      STATUS        |      VALUE         |
-|--------------------|--------------------|
-|      SUCCESS       |         0          |
-|      FAILURE       |         1          |
-
-This information helps the front-end to decide what to render and how.
-

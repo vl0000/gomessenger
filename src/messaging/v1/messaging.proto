@@ -18,8 +18,7 @@ message RegisterUserRequest {
 }
 
 message RegisterUserResponse {
-  optional string jwt_token = 1;
-  STATUS status = 2;
+  string jwt_token = 1;
 }
 
 message LoginRequest {
@@ -28,8 +27,7 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  optional string jwt_token = 1;
-  STATUS status = 2;
+  string jwt_token = 1;
 }
 
 enum STATUS {

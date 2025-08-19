@@ -93,3 +93,22 @@ func DoLoginWork(
 
 	return nil, errors.New("User not found")
 }
+
+func DoSendDirectMessageWork(
+	db *sql.DB,
+	ctx context.Context,
+	msg *messagingv1.SendDirectMessageRequest,
+) (*messagingv1.SendDirectMessageResponse, error) {
+
+	_, err := db.Exec(`INSERT INTO messages (sender, receiver, content, timestamp) VALUES
+		(?, ?, ?, datetime('now'));
+		`, msg.Msg.Sender, msg.Msg.Receiver, msg.Msg.Receiver, msg.Msg.Content)
+
+	if err != nil {
+		return nil, err
+	}
+
+	return &messagingv1.SendDirectMessageResponse{
+		Status: messagingv1.STATUS_STATUS_SUCCESS,
+	}, nil
+}

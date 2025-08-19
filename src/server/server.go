@@ -7,6 +7,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"strings"
 
 	"connectrpc.com/connect"
 	"github.com/go-chi/chi/v5"
@@ -35,22 +36,28 @@ func (s *MessagingServer) SendDirectMessage(
 	req *connect.Request[messagingv1.SendDirectMessageRequest],
 ) (*connect.Response[messagingv1.SendDirectMessageResponse], error) {
 
-	_, err := s.Db.Exec(`INSERT INTO messages (sender, receiver, content, timestamp) VALUES
-		(?, ?, ?, datetime('now'));
-		`, req.Msg.Msg.Sender, req.Msg.Msg.Receiver, req.Msg.Msg.Receiver, req.Msg.Msg.Content)
-
-	if err != nil || req == nil {
-		res := connect.NewResponse(&messagingv1.SendDirectMessageResponse{
-			Status: messagingv1.STATUS_STATUS_FAILURE,
-		})
-		res.Header().Set("Messaging-Version", "v1")
-		return res, fmt.Errorf("SendDirectMessage()\n\t%s", err)
+	// Verify JWT
+	jwt_str := req.Header().Get("Authorization")
+	token, err := s.TokenAuth.Decode(strings.TrimPrefix("bearer ", jwt_str))
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
-	res := connect.NewResponse(&messagingv1.SendDirectMessageResponse{
-		Status: messagingv1.STATUS_STATUS_SUCCESS,
-	})
-	res.Header().Set("Messaging-Version", "v1")
-	return res, nil
+
+	exists, err := CheckUserExists(s.Db, token.Subject())
+	if err != nil || !exists {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	if err := ValidateSendDirectMessageRequest(req.Msg, token); err != nil {
+		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	}
+
+	res, err := DoSendDirectMessageWork(s.Db, ctx, req.Msg)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnknown, err)
+	}
+
+	return connect.NewResponse(res), nil
 }
 
 func (s *MessagingServer) GetDMs(

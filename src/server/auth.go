@@ -33,6 +33,7 @@ func GenJWTString(
 	_, jwt_str, err := token_auth.Encode(map[string]interface{}{
 		"username":     username,
 		"phone_number": phone_number,
+		"subject":      phone_number,
 		"iat":          time.Now().Unix(),
 		"exp":          time.Now().Add(JWT_DURATION).Unix(),
 	})

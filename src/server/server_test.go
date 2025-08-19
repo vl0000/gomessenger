@@ -49,7 +49,8 @@ func TestServer(t *testing.T) {
 
 		// END SETUP
 		req := connect.NewRequest(&message_req)
-		s.SendDirectMessage(context.TODO(), req)
+		// This bypasses the JWT authentication
+		server.DoSendDirectMessageWork(s.Db, context.TODO(), req.Msg)
 		q, err := s.Db.Query("SELECT * FROM messages WHERE sender = '123-456';")
 		if err != nil {
 			t.Fatal(err)

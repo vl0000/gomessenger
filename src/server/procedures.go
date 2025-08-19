@@ -109,9 +109,7 @@ func DoSendDirectMessageWork(
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
-	return &messagingv1.SendDirectMessageResponse{
-		Status: messagingv1.STATUS_STATUS_SUCCESS,
-	}, nil
+	return &messagingv1.SendDirectMessageResponse{}, nil
 }
 
 func DoGetDMsWork(

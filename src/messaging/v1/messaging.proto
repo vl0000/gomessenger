@@ -30,12 +30,6 @@ message LoginResponse {
   string jwt_token = 1;
 }
 
-enum STATUS {
-  STATUS_UNSPECIFIED = 0;
-  STATUS_SUCCESS = 1;
-  STATUS_FAILURE = 2;
-}
-
 message SendDirectMessageRequest {
   Message msg = 1;
 }
@@ -50,7 +44,7 @@ message GetDMsResponse {
   repeated Message messages = 1;
 }
 
-message SendDirectMessageResponse { STATUS status = 1; }
+message SendDirectMessageResponse { }
 
 service MessagingService {
 rpc SendDirectMessage(SendDirectMessageRequest) returns (SendDirectMessageResponse) {}

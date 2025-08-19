@@ -21,55 +21,6 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
-type STATUS int32
-
-const (
-	STATUS_STATUS_UNSPECIFIED STATUS = 0
-	STATUS_STATUS_SUCCESS     STATUS = 1
-	STATUS_STATUS_FAILURE     STATUS = 2
-)
-
-// Enum value maps for STATUS.
-var (
-	STATUS_name = map[int32]string{
-		0: "STATUS_UNSPECIFIED",
-		1: "STATUS_SUCCESS",
-		2: "STATUS_FAILURE",
-	}
-	STATUS_value = map[string]int32{
-		"STATUS_UNSPECIFIED": 0,
-		"STATUS_SUCCESS":     1,
-		"STATUS_FAILURE":     2,
-	}
-)
-
-func (x STATUS) Enum() *STATUS {
-	p := new(STATUS)
-	*p = x
-	return p
-}
-
-func (x STATUS) String() string {
-	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
-}
-
-func (STATUS) Descriptor() protoreflect.EnumDescriptor {
-	return file_messaging_v1_messaging_proto_enumTypes[0].Descriptor()
-}
-
-func (STATUS) Type() protoreflect.EnumType {
-	return &file_messaging_v1_messaging_proto_enumTypes[0]
-}
-
-func (x STATUS) Number() protoreflect.EnumNumber {
-	return protoreflect.EnumNumber(x)
-}
-
-// Deprecated: Use STATUS.Descriptor instead.
-func (STATUS) EnumDescriptor() ([]byte, []int) {
-	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{0}
-}
-
 type Message struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Id            *uint64                `protobuf:"varint,1,opt,name=id,proto3,oneof" json:"id,omitempty"`
@@ -496,7 +447,6 @@ func (x *GetDMsResponse) GetMessages() []*Message {
 
 type SendDirectMessageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Status        STATUS                 `protobuf:"varint,1,opt,name=status,proto3,enum=messaging.v1.STATUS" json:"status,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -531,13 +481,6 @@ func (*SendDirectMessageResponse) Descriptor() ([]byte, []int) {
 	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{8}
 }
 
-func (x *SendDirectMessageResponse) GetStatus() STATUS {
-	if x != nil {
-		return x.Status
-	}
-	return STATUS_STATUS_UNSPECIFIED
-}
-
 var File_messaging_v1_messaging_proto protoreflect.FileDescriptor
 
 const file_messaging_v1_messaging_proto_rawDesc = "" +
@@ -570,13 +513,8 @@ const file_messaging_v1_messaging_proto_rawDesc = "" +
 	"\breceiver\x18\x02 \x01(\tR\breceiver\x12\x1b\n" +
 	"\tfrom_date\x18\x03 \x01(\tR\bfromDate\"C\n" +
 	"\x0eGetDMsResponse\x121\n" +
-	"\bmessages\x18\x01 \x03(\v2\x15.messaging.v1.MessageR\bmessages\"I\n" +
-	"\x19SendDirectMessageResponse\x12,\n" +
-	"\x06status\x18\x01 \x01(\x0e2\x14.messaging.v1.STATUSR\x06status*H\n" +
-	"\x06STATUS\x12\x16\n" +
-	"\x12STATUS_UNSPECIFIED\x10\x00\x12\x12\n" +
-	"\x0eSTATUS_SUCCESS\x10\x01\x12\x12\n" +
-	"\x0eSTATUS_FAILURE\x10\x022\xde\x02\n" +
+	"\bmessages\x18\x01 \x03(\v2\x15.messaging.v1.MessageR\bmessages\"\x1b\n" +
+	"\x19SendDirectMessageResponse2\xde\x02\n" +
 	"\x10MessagingService\x12f\n" +
 	"\x11SendDirectMessage\x12&.messaging.v1.SendDirectMessageRequest\x1a'.messaging.v1.SendDirectMessageResponse\"\x00\x12E\n" +
 	"\x06GetDMs\x12\x1b.messaging.v1.GetDMsRequest\x1a\x1c.messaging.v1.GetDMsResponse\"\x00\x12W\n" +
@@ -595,37 +533,34 @@ func file_messaging_v1_messaging_proto_rawDescGZIP() []byte {
 	return file_messaging_v1_messaging_proto_rawDescData
 }
 
-var file_messaging_v1_messaging_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
 var file_messaging_v1_messaging_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
 var file_messaging_v1_messaging_proto_goTypes = []any{
-	(STATUS)(0),                       // 0: messaging.v1.STATUS
-	(*Message)(nil),                   // 1: messaging.v1.Message
-	(*RegisterUserRequest)(nil),       // 2: messaging.v1.RegisterUserRequest
-	(*RegisterUserResponse)(nil),      // 3: messaging.v1.RegisterUserResponse
-	(*LoginRequest)(nil),              // 4: messaging.v1.LoginRequest
-	(*LoginResponse)(nil),             // 5: messaging.v1.LoginResponse
-	(*SendDirectMessageRequest)(nil),  // 6: messaging.v1.SendDirectMessageRequest
-	(*GetDMsRequest)(nil),             // 7: messaging.v1.GetDMsRequest
-	(*GetDMsResponse)(nil),            // 8: messaging.v1.GetDMsResponse
-	(*SendDirectMessageResponse)(nil), // 9: messaging.v1.SendDirectMessageResponse
+	(*Message)(nil),                   // 0: messaging.v1.Message
+	(*RegisterUserRequest)(nil),       // 1: messaging.v1.RegisterUserRequest
+	(*RegisterUserResponse)(nil),      // 2: messaging.v1.RegisterUserResponse
+	(*LoginRequest)(nil),              // 3: messaging.v1.LoginRequest
+	(*LoginResponse)(nil),             // 4: messaging.v1.LoginResponse
+	(*SendDirectMessageRequest)(nil),  // 5: messaging.v1.SendDirectMessageRequest
+	(*GetDMsRequest)(nil),             // 6: messaging.v1.GetDMsRequest
+	(*GetDMsResponse)(nil),            // 7: messaging.v1.GetDMsResponse
+	(*SendDirectMessageResponse)(nil), // 8: messaging.v1.SendDirectMessageResponse
 }
 var file_messaging_v1_messaging_proto_depIdxs = []int32{
-	1, // 0: messaging.v1.SendDirectMessageRequest.msg:type_name -> messaging.v1.Message
-	1, // 1: messaging.v1.GetDMsResponse.messages:type_name -> messaging.v1.Message
-	0, // 2: messaging.v1.SendDirectMessageResponse.status:type_name -> messaging.v1.STATUS
-	6, // 3: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
-	7, // 4: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
-	2, // 5: messaging.v1.MessagingService.RegisterUser:input_type -> messaging.v1.RegisterUserRequest
-	4, // 6: messaging.v1.MessagingService.Login:input_type -> messaging.v1.LoginRequest
-	9, // 7: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
-	8, // 8: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
-	3, // 9: messaging.v1.MessagingService.RegisterUser:output_type -> messaging.v1.RegisterUserResponse
-	5, // 10: messaging.v1.MessagingService.Login:output_type -> messaging.v1.LoginResponse
-	7, // [7:11] is the sub-list for method output_type
-	3, // [3:7] is the sub-list for method input_type
-	3, // [3:3] is the sub-list for extension type_name
-	3, // [3:3] is the sub-list for extension extendee
-	0, // [0:3] is the sub-list for field type_name
+	0, // 0: messaging.v1.SendDirectMessageRequest.msg:type_name -> messaging.v1.Message
+	0, // 1: messaging.v1.GetDMsResponse.messages:type_name -> messaging.v1.Message
+	5, // 2: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
+	6, // 3: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
+	1, // 4: messaging.v1.MessagingService.RegisterUser:input_type -> messaging.v1.RegisterUserRequest
+	3, // 5: messaging.v1.MessagingService.Login:input_type -> messaging.v1.LoginRequest
+	8, // 6: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
+	7, // 7: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
+	2, // 8: messaging.v1.MessagingService.RegisterUser:output_type -> messaging.v1.RegisterUserResponse
+	4, // 9: messaging.v1.MessagingService.Login:output_type -> messaging.v1.LoginResponse
+	6, // [6:10] is the sub-list for method output_type
+	2, // [2:6] is the sub-list for method input_type
+	2, // [2:2] is the sub-list for extension type_name
+	2, // [2:2] is the sub-list for extension extendee
+	0, // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_messaging_v1_messaging_proto_init() }
@@ -639,14 +574,13 @@ func file_messaging_v1_messaging_proto_init() {
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_messaging_v1_messaging_proto_rawDesc), len(file_messaging_v1_messaging_proto_rawDesc)),
-			NumEnums:      1,
+			NumEnums:      0,
 			NumMessages:   9,
 			NumExtensions: 0,
 			NumServices:   1,
 		},
 		GoTypes:           file_messaging_v1_messaging_proto_goTypes,
 		DependencyIndexes: file_messaging_v1_messaging_proto_depIdxs,
-		EnumInfos:         file_messaging_v1_messaging_proto_enumTypes,
 		MessageInfos:      file_messaging_v1_messaging_proto_msgTypes,
 	}.Build()
 	File_messaging_v1_messaging_proto = out.File

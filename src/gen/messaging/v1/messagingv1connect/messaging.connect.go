@@ -43,6 +43,9 @@ const (
 	MessagingServiceRegisterUserProcedure = "/messaging.v1.MessagingService/RegisterUser"
 	// MessagingServiceLoginProcedure is the fully-qualified name of the MessagingService's Login RPC.
 	MessagingServiceLoginProcedure = "/messaging.v1.MessagingService/Login"
+	// MessagingServiceGetUserInfoProcedure is the fully-qualified name of the MessagingService's
+	// GetUserInfo RPC.
+	MessagingServiceGetUserInfoProcedure = "/messaging.v1.MessagingService/GetUserInfo"
 )
 
 // MessagingServiceClient is a client for the messaging.v1.MessagingService service.
@@ -51,6 +54,7 @@ type MessagingServiceClient interface {
 	GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error)
 	RegisterUser(context.Context, *connect.Request[v1.RegisterUserRequest]) (*connect.Response[v1.RegisterUserResponse], error)
 	Login(context.Context, *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error)
+	GetUserInfo(context.Context, *connect.Request[v1.GetUserInfoRequest]) (*connect.Response[v1.GetUserInfoResponse], error)
 }
 
 // NewMessagingServiceClient constructs a client for the messaging.v1.MessagingService service. By
@@ -88,6 +92,12 @@ func NewMessagingServiceClient(httpClient connect.HTTPClient, baseURL string, op
 			connect.WithSchema(messagingServiceMethods.ByName("Login")),
 			connect.WithClientOptions(opts...),
 		),
+		getUserInfo: connect.NewClient[v1.GetUserInfoRequest, v1.GetUserInfoResponse](
+			httpClient,
+			baseURL+MessagingServiceGetUserInfoProcedure,
+			connect.WithSchema(messagingServiceMethods.ByName("GetUserInfo")),
+			connect.WithClientOptions(opts...),
+		),
 	}
 }
 
@@ -97,6 +107,7 @@ type messagingServiceClient struct {
 	getDMs            *connect.Client[v1.GetDMsRequest, v1.GetDMsResponse]
 	registerUser      *connect.Client[v1.RegisterUserRequest, v1.RegisterUserResponse]
 	login             *connect.Client[v1.LoginRequest, v1.LoginResponse]
+	getUserInfo       *connect.Client[v1.GetUserInfoRequest, v1.GetUserInfoResponse]
 }
 
 // SendDirectMessage calls messaging.v1.MessagingService.SendDirectMessage.
@@ -119,12 +130,18 @@ func (c *messagingServiceClient) Login(ctx context.Context, req *connect.Request
 	return c.login.CallUnary(ctx, req)
 }
 
+// GetUserInfo calls messaging.v1.MessagingService.GetUserInfo.
+func (c *messagingServiceClient) GetUserInfo(ctx context.Context, req *connect.Request[v1.GetUserInfoRequest]) (*connect.Response[v1.GetUserInfoResponse], error) {
+	return c.getUserInfo.CallUnary(ctx, req)
+}
+
 // MessagingServiceHandler is an implementation of the messaging.v1.MessagingService service.
 type MessagingServiceHandler interface {
 	SendDirectMessage(context.Context, *connect.Request[v1.SendDirectMessageRequest]) (*connect.Response[v1.SendDirectMessageResponse], error)
 	GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error)
 	RegisterUser(context.Context, *connect.Request[v1.RegisterUserRequest]) (*connect.Response[v1.RegisterUserResponse], error)
 	Login(context.Context, *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error)
+	GetUserInfo(context.Context, *connect.Request[v1.GetUserInfoRequest]) (*connect.Response[v1.GetUserInfoResponse], error)
 }
 
 // NewMessagingServiceHandler builds an HTTP handler from the service implementation. It returns the
@@ -158,6 +175,12 @@ func NewMessagingServiceHandler(svc MessagingServiceHandler, opts ...connect.Han
 		connect.WithSchema(messagingServiceMethods.ByName("Login")),
 		connect.WithHandlerOptions(opts...),
 	)
+	messagingServiceGetUserInfoHandler := connect.NewUnaryHandler(
+		MessagingServiceGetUserInfoProcedure,
+		svc.GetUserInfo,
+		connect.WithSchema(messagingServiceMethods.ByName("GetUserInfo")),
+		connect.WithHandlerOptions(opts...),
+	)
 	return "/messaging.v1.MessagingService/", http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		switch r.URL.Path {
 		case MessagingServiceSendDirectMessageProcedure:
@@ -168,6 +191,8 @@ func NewMessagingServiceHandler(svc MessagingServiceHandler, opts ...connect.Han
 			messagingServiceRegisterUserHandler.ServeHTTP(w, r)
 		case MessagingServiceLoginProcedure:
 			messagingServiceLoginHandler.ServeHTTP(w, r)
+		case MessagingServiceGetUserInfoProcedure:
+			messagingServiceGetUserInfoHandler.ServeHTTP(w, r)
 		default:
 			http.NotFound(w, r)
 		}
@@ -191,4 +216,8 @@ func (UnimplementedMessagingServiceHandler) RegisterUser(context.Context, *conne
 
 func (UnimplementedMessagingServiceHandler) Login(context.Context, *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error) {
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("messaging.v1.MessagingService.Login is not implemented"))
+}
+
+func (UnimplementedMessagingServiceHandler) GetUserInfo(context.Context, *connect.Request[v1.GetUserInfoRequest]) (*connect.Response[v1.GetUserInfoResponse], error) {
+	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("messaging.v1.MessagingService.GetUserInfo is not implemented"))
 }

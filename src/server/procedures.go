@@ -151,3 +151,28 @@ func DoGetDMsWork(
 	}
 	return res, nil
 }
+
+func DoGetUserInfoWork(
+	db *sql.DB,
+	ctx context.Context,
+	req *messagingv1.GetUserInfoRequest,
+) (*messagingv1.GetUserInfoResponse, error) {
+
+	q, err := db.Query(`
+		SELECT * FROM users WHERE phone_number = ? LIMIT 1;`,
+		req.PhoneNumber,
+	)
+	if err != nil {
+		return nil, err
+	}
+
+	defer q.Close()
+
+	response := &messagingv1.GetUserInfoResponse{}
+	if q.Next() {
+		q.Scan(&response.PhoneNumber, &response.Username)
+		return response, nil
+	}
+
+	return nil, connect.NewError(connect.CodeNotFound, nil)
+}

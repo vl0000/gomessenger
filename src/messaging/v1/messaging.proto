@@ -46,9 +46,18 @@ message GetDMsResponse {
 
 message SendDirectMessageResponse { }
 
+message GetUserInfoRequest {
+string phone_number = 1;
+}
+message GetUserInfoResponse {
+string phone_number = 1;
+string username = 2;
+}
+
 service MessagingService {
 rpc SendDirectMessage(SendDirectMessageRequest) returns (SendDirectMessageResponse) {}
 rpc GetDMs(GetDMsRequest) returns (GetDMsResponse) {}
 rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse) {}
 rpc Login(LoginRequest) returns (LoginResponse) {}
+rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {}
 }

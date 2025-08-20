@@ -481,6 +481,102 @@ func (*SendDirectMessageResponse) Descriptor() ([]byte, []int) {
 	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{8}
 }
 
+type GetUserInfoRequest struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PhoneNumber   string                 `protobuf:"bytes,1,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserInfoRequest) Reset() {
+	*x = GetUserInfoRequest{}
+	mi := &file_messaging_v1_messaging_proto_msgTypes[9]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserInfoRequest) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserInfoRequest) ProtoMessage() {}
+
+func (x *GetUserInfoRequest) ProtoReflect() protoreflect.Message {
+	mi := &file_messaging_v1_messaging_proto_msgTypes[9]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserInfoRequest.ProtoReflect.Descriptor instead.
+func (*GetUserInfoRequest) Descriptor() ([]byte, []int) {
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{9}
+}
+
+func (x *GetUserInfoRequest) GetPhoneNumber() string {
+	if x != nil {
+		return x.PhoneNumber
+	}
+	return ""
+}
+
+type GetUserInfoResponse struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	PhoneNumber   string                 `protobuf:"bytes,1,opt,name=phone_number,json=phoneNumber,proto3" json:"phone_number,omitempty"`
+	Username      string                 `protobuf:"bytes,2,opt,name=username,proto3" json:"username,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *GetUserInfoResponse) Reset() {
+	*x = GetUserInfoResponse{}
+	mi := &file_messaging_v1_messaging_proto_msgTypes[10]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *GetUserInfoResponse) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*GetUserInfoResponse) ProtoMessage() {}
+
+func (x *GetUserInfoResponse) ProtoReflect() protoreflect.Message {
+	mi := &file_messaging_v1_messaging_proto_msgTypes[10]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use GetUserInfoResponse.ProtoReflect.Descriptor instead.
+func (*GetUserInfoResponse) Descriptor() ([]byte, []int) {
+	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{10}
+}
+
+func (x *GetUserInfoResponse) GetPhoneNumber() string {
+	if x != nil {
+		return x.PhoneNumber
+	}
+	return ""
+}
+
+func (x *GetUserInfoResponse) GetUsername() string {
+	if x != nil {
+		return x.Username
+	}
+	return ""
+}
+
 var File_messaging_v1_messaging_proto protoreflect.FileDescriptor
 
 const file_messaging_v1_messaging_proto_rawDesc = "" +
@@ -514,12 +610,18 @@ const file_messaging_v1_messaging_proto_rawDesc = "" +
 	"\tfrom_date\x18\x03 \x01(\tR\bfromDate\"C\n" +
 	"\x0eGetDMsResponse\x121\n" +
 	"\bmessages\x18\x01 \x03(\v2\x15.messaging.v1.MessageR\bmessages\"\x1b\n" +
-	"\x19SendDirectMessageResponse2\xde\x02\n" +
+	"\x19SendDirectMessageResponse\"7\n" +
+	"\x12GetUserInfoRequest\x12!\n" +
+	"\fphone_number\x18\x01 \x01(\tR\vphoneNumber\"T\n" +
+	"\x13GetUserInfoResponse\x12!\n" +
+	"\fphone_number\x18\x01 \x01(\tR\vphoneNumber\x12\x1a\n" +
+	"\busername\x18\x02 \x01(\tR\busername2\xb4\x03\n" +
 	"\x10MessagingService\x12f\n" +
 	"\x11SendDirectMessage\x12&.messaging.v1.SendDirectMessageRequest\x1a'.messaging.v1.SendDirectMessageResponse\"\x00\x12E\n" +
 	"\x06GetDMs\x12\x1b.messaging.v1.GetDMsRequest\x1a\x1c.messaging.v1.GetDMsResponse\"\x00\x12W\n" +
 	"\fRegisterUser\x12!.messaging.v1.RegisterUserRequest\x1a\".messaging.v1.RegisterUserResponse\"\x00\x12B\n" +
-	"\x05Login\x12\x1a.messaging.v1.LoginRequest\x1a\x1b.messaging.v1.LoginResponse\"\x00B<Z:github.com/vl0000/gomessenger/gen/messaging/v1;messagingv1b\x06proto3"
+	"\x05Login\x12\x1a.messaging.v1.LoginRequest\x1a\x1b.messaging.v1.LoginResponse\"\x00\x12T\n" +
+	"\vGetUserInfo\x12 .messaging.v1.GetUserInfoRequest\x1a!.messaging.v1.GetUserInfoResponse\"\x00B<Z:github.com/vl0000/gomessenger/gen/messaging/v1;messagingv1b\x06proto3"
 
 var (
 	file_messaging_v1_messaging_proto_rawDescOnce sync.Once
@@ -533,7 +635,7 @@ func file_messaging_v1_messaging_proto_rawDescGZIP() []byte {
 	return file_messaging_v1_messaging_proto_rawDescData
 }
 
-var file_messaging_v1_messaging_proto_msgTypes = make([]protoimpl.MessageInfo, 9)
+var file_messaging_v1_messaging_proto_msgTypes = make([]protoimpl.MessageInfo, 11)
 var file_messaging_v1_messaging_proto_goTypes = []any{
 	(*Message)(nil),                   // 0: messaging.v1.Message
 	(*RegisterUserRequest)(nil),       // 1: messaging.v1.RegisterUserRequest
@@ -544,23 +646,27 @@ var file_messaging_v1_messaging_proto_goTypes = []any{
 	(*GetDMsRequest)(nil),             // 6: messaging.v1.GetDMsRequest
 	(*GetDMsResponse)(nil),            // 7: messaging.v1.GetDMsResponse
 	(*SendDirectMessageResponse)(nil), // 8: messaging.v1.SendDirectMessageResponse
+	(*GetUserInfoRequest)(nil),        // 9: messaging.v1.GetUserInfoRequest
+	(*GetUserInfoResponse)(nil),       // 10: messaging.v1.GetUserInfoResponse
 }
 var file_messaging_v1_messaging_proto_depIdxs = []int32{
-	0, // 0: messaging.v1.SendDirectMessageRequest.msg:type_name -> messaging.v1.Message
-	0, // 1: messaging.v1.GetDMsResponse.messages:type_name -> messaging.v1.Message
-	5, // 2: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
-	6, // 3: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
-	1, // 4: messaging.v1.MessagingService.RegisterUser:input_type -> messaging.v1.RegisterUserRequest
-	3, // 5: messaging.v1.MessagingService.Login:input_type -> messaging.v1.LoginRequest
-	8, // 6: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
-	7, // 7: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
-	2, // 8: messaging.v1.MessagingService.RegisterUser:output_type -> messaging.v1.RegisterUserResponse
-	4, // 9: messaging.v1.MessagingService.Login:output_type -> messaging.v1.LoginResponse
-	6, // [6:10] is the sub-list for method output_type
-	2, // [2:6] is the sub-list for method input_type
-	2, // [2:2] is the sub-list for extension type_name
-	2, // [2:2] is the sub-list for extension extendee
-	0, // [0:2] is the sub-list for field type_name
+	0,  // 0: messaging.v1.SendDirectMessageRequest.msg:type_name -> messaging.v1.Message
+	0,  // 1: messaging.v1.GetDMsResponse.messages:type_name -> messaging.v1.Message
+	5,  // 2: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
+	6,  // 3: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
+	1,  // 4: messaging.v1.MessagingService.RegisterUser:input_type -> messaging.v1.RegisterUserRequest
+	3,  // 5: messaging.v1.MessagingService.Login:input_type -> messaging.v1.LoginRequest
+	9,  // 6: messaging.v1.MessagingService.GetUserInfo:input_type -> messaging.v1.GetUserInfoRequest
+	8,  // 7: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
+	7,  // 8: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
+	2,  // 9: messaging.v1.MessagingService.RegisterUser:output_type -> messaging.v1.RegisterUserResponse
+	4,  // 10: messaging.v1.MessagingService.Login:output_type -> messaging.v1.LoginResponse
+	10, // 11: messaging.v1.MessagingService.GetUserInfo:output_type -> messaging.v1.GetUserInfoResponse
+	7,  // [7:12] is the sub-list for method output_type
+	2,  // [2:7] is the sub-list for method input_type
+	2,  // [2:2] is the sub-list for extension type_name
+	2,  // [2:2] is the sub-list for extension extendee
+	0,  // [0:2] is the sub-list for field type_name
 }
 
 func init() { file_messaging_v1_messaging_proto_init() }
@@ -575,7 +681,7 @@ func file_messaging_v1_messaging_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_messaging_v1_messaging_proto_rawDesc), len(file_messaging_v1_messaging_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   9,
+			NumMessages:   11,
 			NumExtensions: 0,
 			NumServices:   1,
 		},

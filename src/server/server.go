@@ -126,3 +126,27 @@ func (s *MessagingServer) Login(
 	return connect.NewResponse(response), nil
 
 }
+
+func (s *MessagingServer) GetUserInfo(
+	ctx context.Context,
+	req *connect.Request[messagingv1.GetUserInfoRequest],
+) (*connect.Response[messagingv1.GetUserInfoResponse], error) {
+	jwt_str := req.Header().Get("Authorization")
+	token, err := s.TokenAuth.Decode(strings.TrimPrefix("bearer ", jwt_str))
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	exists, err := CheckUserExists(s.Db, token.Subject())
+	if err != nil || !exists {
+		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	response, err := DoGetUserInfoWork(s.Db, ctx, req.Msg)
+	if err != nil {
+		return nil, connect.NewError(connect.CodeUnknown, err)
+	}
+
+	return connect.NewResponse(response), nil
+
+}

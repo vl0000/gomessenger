@@ -103,7 +103,7 @@ func DoSendDirectMessageWork(
 
 	_, err := db.Exec(`INSERT INTO messages (sender, receiver, content, timestamp) VALUES
 		(?, ?, ?, datetime('now'));
-		`, msg.Msg.Sender, msg.Msg.Receiver, msg.Msg.Content, msg.Msg.Content)
+		`, msg.Msg.Sender, msg.Msg.Receiver, msg.Msg.Content)
 
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
@@ -168,10 +168,20 @@ func DoGetUserInfoWork(
 
 	defer q.Close()
 
-	response := &messagingv1.GetUserInfoResponse{}
 	if q.Next() {
-		q.Scan(&response.PhoneNumber, &response.Username)
-		return response, nil
+		var phone_number, username string
+		err = q.Scan(&phone_number, &username, nil, nil)
+		// rows.Scan will return an error if you do not give it a pointer,
+		// but this doesn't stop it from retrieving the necessary data.
+		// This means that the error is only relevant these are empty
+		if phone_number == "" || username == "" {
+			return nil, connect.NewError(connect.CodeUnknown, err)
+		}
+
+		return &messagingv1.GetUserInfoResponse{
+			PhoneNumber: phone_number,
+			Username:    username,
+		}, nil
 	}
 
 	return nil, connect.NewError(connect.CodeNotFound, nil)

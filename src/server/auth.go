@@ -14,10 +14,10 @@ func CheckUserExists(db *sql.DB, phone_number string) (bool, error) {
 		SELECT * FROM users WHERE phone_number = ? LIMIT 1;`,
 		phone_number,
 	)
-	defer q.Close()
 	if err != nil {
 		return false, err
 	}
+	defer q.Close()
 	if !q.Next() {
 		return false, nil
 	}

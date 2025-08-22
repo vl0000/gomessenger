@@ -6,7 +6,6 @@ import (
 	"log"
 	"net/http"
 	"os"
-	"strings"
 
 	"connectrpc.com/connect"
 	"github.com/go-chi/chi/v5"
@@ -37,7 +36,7 @@ func (s *MessagingServer) SendDirectMessage(
 
 	// Verify JWT
 	jwt_str := req.Header().Get("Authorization")
-	token, err := s.TokenAuth.Decode(strings.TrimPrefix("bearer ", jwt_str))
+	token, err := s.TokenAuth.Decode(jwt_str)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
@@ -65,7 +64,7 @@ func (s *MessagingServer) GetDMs(
 ) (*connect.Response[messagingv1.GetDMsResponse], error) {
 	// Verify JWT
 	jwt_str := req.Header().Get("Authorization")
-	token, err := s.TokenAuth.Decode(strings.TrimPrefix("bearer ", jwt_str))
+	token, err := s.TokenAuth.Decode(jwt_str)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
@@ -132,7 +131,7 @@ func (s *MessagingServer) GetUserInfo(
 	req *connect.Request[messagingv1.GetUserInfoRequest],
 ) (*connect.Response[messagingv1.GetUserInfoResponse], error) {
 	jwt_str := req.Header().Get("Authorization")
-	token, err := s.TokenAuth.Decode(strings.TrimPrefix("bearer ", jwt_str))
+	token, err := s.TokenAuth.Decode(jwt_str)
 	if err != nil {
 		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}

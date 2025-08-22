@@ -103,7 +103,7 @@ func DoSendDirectMessageWork(
 
 	_, err := db.Exec(`INSERT INTO messages (sender, receiver, content, timestamp) VALUES
 		(?, ?, ?, datetime('now'));
-		`, msg.Msg.Sender, msg.Msg.Receiver, msg.Msg.Receiver, msg.Msg.Content)
+		`, msg.Msg.Sender, msg.Msg.Receiver, msg.Msg.Content, msg.Msg.Content)
 
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)

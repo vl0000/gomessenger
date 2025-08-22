@@ -75,7 +75,7 @@ func DoLoginWork(
 	if q.Next() {
 		var stored_password, phone_number, username, salt string
 
-		q.Scan(&username, &phone_number, &stored_password, &salt)
+		q.Scan(&phone_number, &username, &stored_password, &salt)
 		hashed_password, err := pbkdf2.Key(sha512.New, msg.Password, []byte(salt), PBKDF_ITER, PBKDF_KEY_LEN)
 
 		if err == nil || string(hashed_password) == stored_password {

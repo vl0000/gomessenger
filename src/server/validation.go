@@ -79,10 +79,5 @@ func (s *MessagingServer) validateGetUserInfo(req *connect.Request[messagingv1.G
 		return connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
-	exists, err = CheckUserExists(s.Db, req.Msg.PhoneNumber)
-	if err != nil || !exists {
-		return connect.NewError(connect.CodeUnauthenticated, err)
-	}
-
 	return nil
 }

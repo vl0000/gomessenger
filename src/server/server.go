@@ -29,6 +29,10 @@ func (s *MessagingServer) Start() {
 	http.ListenAndServe(s.Addr, h2c.NewHandler(s.Router, &http2.Server{}))
 }
 
+func (s *MessagingServer) Shutdown() {
+	s.Db.Close()
+}
+
 func (s *MessagingServer) SendDirectMessage(
 	ctx context.Context,
 	req *connect.Request[messagingv1.SendDirectMessageRequest],

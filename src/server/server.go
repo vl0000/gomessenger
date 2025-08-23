@@ -39,20 +39,12 @@ func (s *MessagingServer) SendDirectMessage(
 	req *connect.Request[messagingv1.SendDirectMessageRequest],
 ) (*connect.Response[messagingv1.SendDirectMessageResponse], error) {
 
-	// Verify JWT
-	jwt_str := req.Header().Get("Authorization")
-	token, err := s.TokenAuth.Decode(jwt_str)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	if err := ctx.Err(); err != nil {
+		return nil, err
 	}
 
-	exists, err := CheckUserExists(s.Db, token.Subject())
-	if err != nil || !exists {
-		return nil, connect.NewError(connect.CodeUnauthenticated, err)
-	}
-
-	if err := s.validateSendDirectMessageRequest(req, token); err != nil {
-		return nil, connect.NewError(connect.CodeInvalidArgument, err)
+	if err := s.validateSendDirectMessageRequest(req); err != nil {
+		return nil, err
 	}
 
 	res, err := DoSendDirectMessageWork(s.Db, ctx, req.Msg)
@@ -67,16 +59,14 @@ func (s *MessagingServer) GetDMs(
 	ctx context.Context,
 	req *connect.Request[messagingv1.GetDMsRequest],
 ) (*connect.Response[messagingv1.GetDMsResponse], error) {
-	// Verify JWT
-	jwt_str := req.Header().Get("Authorization")
-	token, err := s.TokenAuth.Decode(jwt_str)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+
+	if err := ctx.Err(); err != nil {
+		return nil, err
 	}
 
-	exists, err := CheckUserExists(s.Db, token.Subject())
-	if err != nil || !exists {
-		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	err := s.validateGetDMsRequest(req)
+	if err != nil {
+		return nil, err
 	}
 
 	res, err := DoGetDMsWork(s.Db, ctx, req.Msg)
@@ -135,15 +125,14 @@ func (s *MessagingServer) GetUserInfo(
 	ctx context.Context,
 	req *connect.Request[messagingv1.GetUserInfoRequest],
 ) (*connect.Response[messagingv1.GetUserInfoResponse], error) {
-	jwt_str := req.Header().Get("Authorization")
-	token, err := s.TokenAuth.Decode(jwt_str)
-	if err != nil {
-		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+
+	if err := ctx.Err(); err != nil {
+		return nil, err
 	}
 
-	exists, err := CheckUserExists(s.Db, token.Subject())
-	if err != nil || !exists {
-		return nil, connect.NewError(connect.CodeUnauthenticated, err)
+	err := s.validateGetUserInfo(req)
+	if err != nil {
+		return nil, err
 	}
 
 	response, err := DoGetUserInfoWork(s.Db, ctx, req.Msg)

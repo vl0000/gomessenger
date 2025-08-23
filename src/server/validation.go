@@ -2,7 +2,6 @@ package server
 
 import (
 	"connectrpc.com/connect"
-	"github.com/lestrrat-go/jwx/v2/jwt"
 	messagingv1 "github.com/vl0000/gomessenger/gen/messaging/v1"
 )
 
@@ -22,7 +21,6 @@ func (s *MessagingServer) validateRegistrationRequest(req *connect.Request[messa
 
 func (s *MessagingServer) validateSendDirectMessageRequest(
 	req *connect.Request[messagingv1.SendDirectMessageRequest],
-	token jwt.Token,
 ) error {
 	if req.Msg.Msg.Sender == "" || req.Msg.Msg.Receiver == "" || req.Msg.Msg.Content == "" {
 		return connect.NewError(connect.CodeInvalidArgument, nil)
@@ -30,8 +28,57 @@ func (s *MessagingServer) validateSendDirectMessageRequest(
 	if req.Msg.Msg.Sender == req.Msg.Msg.Receiver {
 		return connect.NewError(connect.CodeInvalidArgument, nil)
 	}
+
+	jwt_str := req.Header().Get("Authorization")
+	token, err := s.TokenAuth.Decode(jwt_str)
+	if err != nil {
+		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
 	if req.Msg.Msg.Sender != token.Subject() {
 		return connect.NewError(connect.CodeUnauthenticated, nil)
 	}
+
+	exists, err := CheckUserExists(s.Db, token.Subject())
+	if err != nil || !exists {
+		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	return nil
+}
+
+func (s *MessagingServer) validateGetDMsRequest(req *connect.Request[messagingv1.GetDMsRequest]) error {
+
+	jwt_str := req.Header().Get("Authorization")
+	token, err := s.TokenAuth.Decode(jwt_str)
+	if err != nil {
+		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
+	exists, err := CheckUserExists(s.Db, token.Subject())
+	if err != nil || !exists {
+		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	return nil
+}
+
+func (s *MessagingServer) validateGetUserInfo(req *connect.Request[messagingv1.GetUserInfoRequest]) error {
+
+	jwt_str := req.Header().Get("Authorization")
+	token, err := s.TokenAuth.Decode(jwt_str)
+	if err != nil {
+		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	exists, err := CheckUserExists(s.Db, token.Subject())
+	if err != nil || !exists {
+		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	exists, err = CheckUserExists(s.Db, req.Msg.PhoneNumber)
+	if err != nil || !exists {
+		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
 	return nil
 }

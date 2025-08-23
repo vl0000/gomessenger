@@ -10,7 +10,6 @@ import (
 )
 
 func SetupTestDatabase(path string) (*sql.DB, error) {
-	os.Remove(path)
 	query, err := os.ReadFile(os.Getenv("DB_SCHEMA_PATH"))
 	if err != nil {
 		return nil, fmt.Errorf("DB setup -> %s", err)

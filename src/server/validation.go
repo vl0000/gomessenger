@@ -16,6 +16,10 @@ func (s *MessagingServer) validateRegistrationRequest(req *connect.Request[messa
 	if req.Msg.Password == "" || req.Msg.PhoneNumber == "" || req.Msg.Username == "" {
 		return connect.NewError(connect.CodeInvalidArgument, &connect.Error{})
 	}
+	exists, err := CheckUserExists(s.Db, req.Msg.PhoneNumber)
+	if err != nil || !exists {
+		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
 	return nil
 }
 

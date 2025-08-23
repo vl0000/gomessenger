@@ -23,13 +23,14 @@ type MessagingServer struct {
 	TokenAuth *jwtauth.JWTAuth
 }
 
-func (s *MessagingServer) Start() {
+func (s *MessagingServer) Run() error {
 	s.TokenAuth = jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil)
 	log.Printf("Starting server in address: %s", s.Addr)
-	http.ListenAndServe(s.Addr, h2c.NewHandler(s.Router, &http2.Server{}))
+	return http.ListenAndServe(s.Addr, h2c.NewHandler(s.Router, &http2.Server{}))
 }
 
 func (s *MessagingServer) Shutdown() {
+	log.Println("Shutting down")
 	s.Db.Close()
 }
 

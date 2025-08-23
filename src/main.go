@@ -1,9 +1,12 @@
 package main
 
 import (
+	"context"
 	"log"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
 	"github.com/go-chi/chi/v5"
@@ -38,6 +41,17 @@ func main() {
 
 	s.Router = r
 
-	s.Start()
+	go func() {
+		err := s.Run()
+		if err != nil {
+			log.Println(err)
+		}
+	}()
 
+	shutdown, stop := signal.NotifyContext(context.Background(), syscall.SIGTERM, syscall.SIGINT)
+	defer stop()
+
+	<-shutdown.Done()
+
+	s.Shutdown()
 }

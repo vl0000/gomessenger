@@ -51,7 +51,7 @@ func (s *MessagingServer) SendDirectMessage(
 		return nil, connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
-	if err := ValidateSendDirectMessageRequest(req.Msg, token); err != nil {
+	if err := s.validateSendDirectMessageRequest(req, token); err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
 
@@ -98,7 +98,7 @@ func (s *MessagingServer) RegisterUser(
 		return nil, err
 	}
 
-	if err := ValidateRegistrationRequest(req.Msg); err != nil {
+	if err := s.validateRegistrationRequest(req); err != nil {
 		return nil, err
 	}
 
@@ -119,7 +119,7 @@ func (s *MessagingServer) Login(
 		return nil, err
 	}
 
-	if err := ValidateLoginRequest(req.Msg); err != nil {
+	if err := s.validateLoginRequest(req); err != nil {
 		return nil, err
 	}
 

@@ -15,7 +15,7 @@ import (
 
 const (
 	PBKDF_KEY_LEN int = 32
-	PBKDF_ITER    int = 16384
+	PBKDF_ITER    int = 210000
 )
 
 func DoRegisterUserWork(

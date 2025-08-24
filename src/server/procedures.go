@@ -122,7 +122,7 @@ func DoGetDMsWork(
 	rows, err := db.Query(`SELECT * FROM messages WHERE
 			sender IN (?, ?) AND receiver IN (?, ?) AND
 			timestamp BETWEEN ? AND datetime('now')
-			;`, msg.Sender, msg.Receiver, msg.Receiver, msg.Sender, msg.FromDate)
+			;`, msg.UserA, msg.UserB, msg.UserB, msg.UserA, msg.FromDate)
 
 	if err != nil {
 		return nil, connect.NewError(connect.CodeUnknown, err)

@@ -343,8 +343,8 @@ func (x *SendDirectMessageRequest) GetMsg() *Message {
 
 type GetDMsRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Sender        string                 `protobuf:"bytes,1,opt,name=sender,proto3" json:"sender,omitempty"`
-	Receiver      string                 `protobuf:"bytes,2,opt,name=receiver,proto3" json:"receiver,omitempty"`
+	UserA         string                 `protobuf:"bytes,1,opt,name=user_a,json=userA,proto3" json:"user_a,omitempty"`
+	UserB         string                 `protobuf:"bytes,2,opt,name=user_b,json=userB,proto3" json:"user_b,omitempty"`
 	FromDate      string                 `protobuf:"bytes,3,opt,name=from_date,json=fromDate,proto3" json:"from_date,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
@@ -380,16 +380,16 @@ func (*GetDMsRequest) Descriptor() ([]byte, []int) {
 	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{6}
 }
 
-func (x *GetDMsRequest) GetSender() string {
+func (x *GetDMsRequest) GetUserA() string {
 	if x != nil {
-		return x.Sender
+		return x.UserA
 	}
 	return ""
 }
 
-func (x *GetDMsRequest) GetReceiver() string {
+func (x *GetDMsRequest) GetUserB() string {
 	if x != nil {
-		return x.Receiver
+		return x.UserB
 	}
 	return ""
 }
@@ -603,10 +603,10 @@ const file_messaging_v1_messaging_proto_rawDesc = "" +
 	"\rLoginResponse\x12\x1b\n" +
 	"\tjwt_token\x18\x01 \x01(\tR\bjwtToken\"C\n" +
 	"\x18SendDirectMessageRequest\x12'\n" +
-	"\x03msg\x18\x01 \x01(\v2\x15.messaging.v1.MessageR\x03msg\"`\n" +
-	"\rGetDMsRequest\x12\x16\n" +
-	"\x06sender\x18\x01 \x01(\tR\x06sender\x12\x1a\n" +
-	"\breceiver\x18\x02 \x01(\tR\breceiver\x12\x1b\n" +
+	"\x03msg\x18\x01 \x01(\v2\x15.messaging.v1.MessageR\x03msg\"Z\n" +
+	"\rGetDMsRequest\x12\x15\n" +
+	"\x06user_a\x18\x01 \x01(\tR\x05userA\x12\x15\n" +
+	"\x06user_b\x18\x02 \x01(\tR\x05userB\x12\x1b\n" +
 	"\tfrom_date\x18\x03 \x01(\tR\bfromDate\"C\n" +
 	"\x0eGetDMsResponse\x121\n" +
 	"\bmessages\x18\x01 \x03(\v2\x15.messaging.v1.MessageR\bmessages\"\x1b\n" +

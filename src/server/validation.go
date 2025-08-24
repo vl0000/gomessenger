@@ -74,6 +74,10 @@ func (s *MessagingServer) validateGetDMsRequest(req *connect.Request[messagingv1
 		return connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
+	if token.Subject() != req.Msg.UserA {
+		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
 	return nil
 }
 

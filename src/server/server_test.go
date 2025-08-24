@@ -69,13 +69,13 @@ func TestServer(t *testing.T) {
 			t.Fatal(err)
 		}
 		req := connect.NewRequest(&messagingv1.GetDMsRequest{
-			Sender:   "123-456",
-			Receiver: "654-321",
+			UserA:    "123-456",
+			UserB:    "654-321",
 			FromDate: time.Now().Add(-24 * time.Hour).Format(time.DateTime),
 		})
 		_, err = s.Db.Exec(`INSERT INTO messages (sender, receiver, content, timestamp) VALUES
 			(?, ?, ?, datetime('now'));
-			`, req.Msg.Sender, req.Msg.Receiver, "Hello, World!")
+			`, req.Msg.UserA, req.Msg.UserB, "Hello, World!")
 		if err != nil {
 			t.Fatal(err)
 		}

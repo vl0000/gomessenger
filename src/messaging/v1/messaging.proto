@@ -35,8 +35,8 @@ message SendDirectMessageRequest {
 }
 
 message GetDMsRequest {
-  string sender = 1;
-  string receiver = 2;
+  string user_a = 1;
+  string user_b = 2;
   string from_date = 3;
 }
 

@@ -1,6 +1,8 @@
 package server
 
 import (
+	"time"
+
 	"connectrpc.com/connect"
 	messagingv1 "github.com/vl0000/gomessenger/gen/messaging/v1"
 )
@@ -39,6 +41,10 @@ func (s *MessagingServer) validateSendDirectMessageRequest(
 		return connect.NewError(connect.CodeUnauthenticated, err)
 	}
 
+	if token.Expiration().Before(time.Now()) {
+		return connect.NewError(connect.CodeUnauthenticated, nil)
+	}
+
 	if req.Msg.Msg.Sender != token.Subject() {
 		return connect.NewError(connect.CodeUnauthenticated, nil)
 	}
@@ -58,6 +64,11 @@ func (s *MessagingServer) validateGetDMsRequest(req *connect.Request[messagingv1
 	if err != nil {
 		return connect.NewError(connect.CodeUnauthenticated, err)
 	}
+
+	if token.Expiration().Before(time.Now()) {
+		return connect.NewError(connect.CodeUnauthenticated, nil)
+	}
+
 	exists, err := CheckUserExists(s.Db, token.Subject())
 	if err != nil || !exists {
 		return connect.NewError(connect.CodeUnauthenticated, err)
@@ -77,6 +88,10 @@ func (s *MessagingServer) validateGetUserInfo(req *connect.Request[messagingv1.G
 	exists, err := CheckUserExists(s.Db, token.Subject())
 	if err != nil || !exists {
 		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
+
+	if token.Expiration().Before(time.Now()) {
+		return connect.NewError(connect.CodeUnauthenticated, nil)
 	}
 
 	return nil

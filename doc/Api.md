@@ -80,7 +80,7 @@ The database is queried for a user matching the phone number contained in the re
 These are identical to the ones in [GetUserInfo](#GetUserInfo)
 
 ### **Process 2.0**
-The database will be queried for direct messages between the requesting **User A** phone number(contained in the token) and the target **User B**(contained in the request). The query used:
+The database will be queried for direct messages between the requesting **User A** phone number(contained in the token and request) and the target **User B**(contained in the request). The query used:
 ```sql
 SELECT * FROM messages
 WHERE receiver in (?, ?) AND sender in (?, ?)

@@ -18,7 +18,7 @@ This small messaging app is intended to showcase my ability to use Golang to del
 * Showcasing graphics design skills
 
 ## Database Model
-![](database.png)
+![](./assets/database.png)
 
 The messages table will use a text field to store an **ISO 8601** timestamp. This might be changed in the future when a new DBMS is introduced. SQlite will be used initially for simplicity's sake.
 

@@ -37,7 +37,7 @@ A JWT is generated following this example:
 |iat|2025-08-24T16:57:26.000Z|
 |exp|2025-09-11T16:57:26.000Z|
 
-Sub being the user's phone number, iat and exp are [ISO 8601](https://en.wikipedia.org/wiki/ISO_8601) date time strings.
+Sub being the user's phone number, iat and exp are RFC3339 time strings.
 
 ### **Process 4.0**
 The response is serialised and sent to the client

@@ -1,6 +1,7 @@
 package server
 
 import (
+	"regexp"
 	"time"
 
 	"connectrpc.com/connect"
@@ -19,8 +20,11 @@ func (s *MessagingServer) validateRegistrationRequest(req *connect.Request[messa
 		return connect.NewError(connect.CodeInvalidArgument, &connect.Error{})
 	}
 	exists, err := CheckUserExists(s.Db, req.Msg.PhoneNumber)
-	if err != nil || !exists {
+	if err != nil || exists {
 		return connect.NewError(connect.CodeUnauthenticated, err)
+	}
+	if !regexp.MustCompile(`^\d{3}-\d{3}$`).MatchString(req.Msg.PhoneNumber) {
+		return connect.NewError(connect.CodeInvalidArgument, nil)
 	}
 	return nil
 }

@@ -51,7 +51,7 @@ const (
 // MessagingServiceClient is a client for the messaging.v1.MessagingService service.
 type MessagingServiceClient interface {
 	SendDirectMessage(context.Context, *connect.Request[v1.SendDirectMessageRequest]) (*connect.Response[v1.SendDirectMessageResponse], error)
-	GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error)
+	GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.ServerStreamForClient[v1.GetDMsResponse], error)
 	RegisterUser(context.Context, *connect.Request[v1.RegisterUserRequest]) (*connect.Response[v1.RegisterUserResponse], error)
 	Login(context.Context, *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error)
 	GetUserInfo(context.Context, *connect.Request[v1.GetUserInfoRequest]) (*connect.Response[v1.GetUserInfoResponse], error)
@@ -116,8 +116,8 @@ func (c *messagingServiceClient) SendDirectMessage(ctx context.Context, req *con
 }
 
 // GetDMs calls messaging.v1.MessagingService.GetDMs.
-func (c *messagingServiceClient) GetDMs(ctx context.Context, req *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error) {
-	return c.getDMs.CallUnary(ctx, req)
+func (c *messagingServiceClient) GetDMs(ctx context.Context, req *connect.Request[v1.GetDMsRequest]) (*connect.ServerStreamForClient[v1.GetDMsResponse], error) {
+	return c.getDMs.CallServerStream(ctx, req)
 }
 
 // RegisterUser calls messaging.v1.MessagingService.RegisterUser.
@@ -138,7 +138,7 @@ func (c *messagingServiceClient) GetUserInfo(ctx context.Context, req *connect.R
 // MessagingServiceHandler is an implementation of the messaging.v1.MessagingService service.
 type MessagingServiceHandler interface {
 	SendDirectMessage(context.Context, *connect.Request[v1.SendDirectMessageRequest]) (*connect.Response[v1.SendDirectMessageResponse], error)
-	GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error)
+	GetDMs(context.Context, *connect.Request[v1.GetDMsRequest], *connect.ServerStream[v1.GetDMsResponse]) error
 	RegisterUser(context.Context, *connect.Request[v1.RegisterUserRequest]) (*connect.Response[v1.RegisterUserResponse], error)
 	Login(context.Context, *connect.Request[v1.LoginRequest]) (*connect.Response[v1.LoginResponse], error)
 	GetUserInfo(context.Context, *connect.Request[v1.GetUserInfoRequest]) (*connect.Response[v1.GetUserInfoResponse], error)
@@ -157,7 +157,7 @@ func NewMessagingServiceHandler(svc MessagingServiceHandler, opts ...connect.Han
 		connect.WithSchema(messagingServiceMethods.ByName("SendDirectMessage")),
 		connect.WithHandlerOptions(opts...),
 	)
-	messagingServiceGetDMsHandler := connect.NewUnaryHandler(
+	messagingServiceGetDMsHandler := connect.NewServerStreamHandler(
 		MessagingServiceGetDMsProcedure,
 		svc.GetDMs,
 		connect.WithSchema(messagingServiceMethods.ByName("GetDMs")),
@@ -206,8 +206,8 @@ func (UnimplementedMessagingServiceHandler) SendDirectMessage(context.Context, *
 	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("messaging.v1.MessagingService.SendDirectMessage is not implemented"))
 }
 
-func (UnimplementedMessagingServiceHandler) GetDMs(context.Context, *connect.Request[v1.GetDMsRequest]) (*connect.Response[v1.GetDMsResponse], error) {
-	return nil, connect.NewError(connect.CodeUnimplemented, errors.New("messaging.v1.MessagingService.GetDMs is not implemented"))
+func (UnimplementedMessagingServiceHandler) GetDMs(context.Context, *connect.Request[v1.GetDMsRequest], *connect.ServerStream[v1.GetDMsResponse]) error {
+	return connect.NewError(connect.CodeUnimplemented, errors.New("messaging.v1.MessagingService.GetDMs is not implemented"))
 }
 
 func (UnimplementedMessagingServiceHandler) RegisterUser(context.Context, *connect.Request[v1.RegisterUserRequest]) (*connect.Response[v1.RegisterUserResponse], error) {

@@ -299,7 +299,7 @@ func (x *LoginResponse) GetJwtToken() string {
 
 type SendDirectMessageRequest struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
-	Msg           *Message               `protobuf:"bytes,1,opt,name=msg,proto3" json:"msg,omitempty"`
+	Message       *Message               `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -334,9 +334,9 @@ func (*SendDirectMessageRequest) Descriptor() ([]byte, []int) {
 	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{5}
 }
 
-func (x *SendDirectMessageRequest) GetMsg() *Message {
+func (x *SendDirectMessageRequest) GetMessage() *Message {
 	if x != nil {
-		return x.Msg
+		return x.Message
 	}
 	return nil
 }
@@ -447,6 +447,7 @@ func (x *GetDMsResponse) GetMessages() []*Message {
 
 type SendDirectMessageResponse struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
+	Message       *Message               `protobuf:"bytes,1,opt,name=message,proto3" json:"message,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -479,6 +480,13 @@ func (x *SendDirectMessageResponse) ProtoReflect() protoreflect.Message {
 // Deprecated: Use SendDirectMessageResponse.ProtoReflect.Descriptor instead.
 func (*SendDirectMessageResponse) Descriptor() ([]byte, []int) {
 	return file_messaging_v1_messaging_proto_rawDescGZIP(), []int{8}
+}
+
+func (x *SendDirectMessageResponse) GetMessage() *Message {
+	if x != nil {
+		return x.Message
+	}
+	return nil
 }
 
 type GetUserInfoRequest struct {
@@ -601,24 +609,25 @@ const file_messaging_v1_messaging_proto_rawDesc = "" +
 	"\fphone_number\x18\x01 \x01(\tR\vphoneNumber\x12\x1a\n" +
 	"\bpassword\x18\x02 \x01(\tR\bpassword\",\n" +
 	"\rLoginResponse\x12\x1b\n" +
-	"\tjwt_token\x18\x01 \x01(\tR\bjwtToken\"C\n" +
-	"\x18SendDirectMessageRequest\x12'\n" +
-	"\x03msg\x18\x01 \x01(\v2\x15.messaging.v1.MessageR\x03msg\"Z\n" +
+	"\tjwt_token\x18\x01 \x01(\tR\bjwtToken\"K\n" +
+	"\x18SendDirectMessageRequest\x12/\n" +
+	"\amessage\x18\x01 \x01(\v2\x15.messaging.v1.MessageR\amessage\"Z\n" +
 	"\rGetDMsRequest\x12\x15\n" +
 	"\x06user_a\x18\x01 \x01(\tR\x05userA\x12\x15\n" +
 	"\x06user_b\x18\x02 \x01(\tR\x05userB\x12\x1b\n" +
 	"\tfrom_date\x18\x03 \x01(\tR\bfromDate\"C\n" +
 	"\x0eGetDMsResponse\x121\n" +
-	"\bmessages\x18\x01 \x03(\v2\x15.messaging.v1.MessageR\bmessages\"\x1b\n" +
-	"\x19SendDirectMessageResponse\"7\n" +
+	"\bmessages\x18\x01 \x03(\v2\x15.messaging.v1.MessageR\bmessages\"L\n" +
+	"\x19SendDirectMessageResponse\x12/\n" +
+	"\amessage\x18\x01 \x01(\v2\x15.messaging.v1.MessageR\amessage\"7\n" +
 	"\x12GetUserInfoRequest\x12!\n" +
 	"\fphone_number\x18\x01 \x01(\tR\vphoneNumber\"T\n" +
 	"\x13GetUserInfoResponse\x12!\n" +
 	"\fphone_number\x18\x01 \x01(\tR\vphoneNumber\x12\x1a\n" +
-	"\busername\x18\x02 \x01(\tR\busername2\xb4\x03\n" +
+	"\busername\x18\x02 \x01(\tR\busername2\xb6\x03\n" +
 	"\x10MessagingService\x12f\n" +
-	"\x11SendDirectMessage\x12&.messaging.v1.SendDirectMessageRequest\x1a'.messaging.v1.SendDirectMessageResponse\"\x00\x12E\n" +
-	"\x06GetDMs\x12\x1b.messaging.v1.GetDMsRequest\x1a\x1c.messaging.v1.GetDMsResponse\"\x00\x12W\n" +
+	"\x11SendDirectMessage\x12&.messaging.v1.SendDirectMessageRequest\x1a'.messaging.v1.SendDirectMessageResponse\"\x00\x12G\n" +
+	"\x06GetDMs\x12\x1b.messaging.v1.GetDMsRequest\x1a\x1c.messaging.v1.GetDMsResponse\"\x000\x01\x12W\n" +
 	"\fRegisterUser\x12!.messaging.v1.RegisterUserRequest\x1a\".messaging.v1.RegisterUserResponse\"\x00\x12B\n" +
 	"\x05Login\x12\x1a.messaging.v1.LoginRequest\x1a\x1b.messaging.v1.LoginResponse\"\x00\x12T\n" +
 	"\vGetUserInfo\x12 .messaging.v1.GetUserInfoRequest\x1a!.messaging.v1.GetUserInfoResponse\"\x00B<Z:github.com/vl0000/gomessenger/gen/messaging/v1;messagingv1b\x06proto3"
@@ -650,23 +659,24 @@ var file_messaging_v1_messaging_proto_goTypes = []any{
 	(*GetUserInfoResponse)(nil),       // 10: messaging.v1.GetUserInfoResponse
 }
 var file_messaging_v1_messaging_proto_depIdxs = []int32{
-	0,  // 0: messaging.v1.SendDirectMessageRequest.msg:type_name -> messaging.v1.Message
+	0,  // 0: messaging.v1.SendDirectMessageRequest.message:type_name -> messaging.v1.Message
 	0,  // 1: messaging.v1.GetDMsResponse.messages:type_name -> messaging.v1.Message
-	5,  // 2: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
-	6,  // 3: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
-	1,  // 4: messaging.v1.MessagingService.RegisterUser:input_type -> messaging.v1.RegisterUserRequest
-	3,  // 5: messaging.v1.MessagingService.Login:input_type -> messaging.v1.LoginRequest
-	9,  // 6: messaging.v1.MessagingService.GetUserInfo:input_type -> messaging.v1.GetUserInfoRequest
-	8,  // 7: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
-	7,  // 8: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
-	2,  // 9: messaging.v1.MessagingService.RegisterUser:output_type -> messaging.v1.RegisterUserResponse
-	4,  // 10: messaging.v1.MessagingService.Login:output_type -> messaging.v1.LoginResponse
-	10, // 11: messaging.v1.MessagingService.GetUserInfo:output_type -> messaging.v1.GetUserInfoResponse
-	7,  // [7:12] is the sub-list for method output_type
-	2,  // [2:7] is the sub-list for method input_type
-	2,  // [2:2] is the sub-list for extension type_name
-	2,  // [2:2] is the sub-list for extension extendee
-	0,  // [0:2] is the sub-list for field type_name
+	0,  // 2: messaging.v1.SendDirectMessageResponse.message:type_name -> messaging.v1.Message
+	5,  // 3: messaging.v1.MessagingService.SendDirectMessage:input_type -> messaging.v1.SendDirectMessageRequest
+	6,  // 4: messaging.v1.MessagingService.GetDMs:input_type -> messaging.v1.GetDMsRequest
+	1,  // 5: messaging.v1.MessagingService.RegisterUser:input_type -> messaging.v1.RegisterUserRequest
+	3,  // 6: messaging.v1.MessagingService.Login:input_type -> messaging.v1.LoginRequest
+	9,  // 7: messaging.v1.MessagingService.GetUserInfo:input_type -> messaging.v1.GetUserInfoRequest
+	8,  // 8: messaging.v1.MessagingService.SendDirectMessage:output_type -> messaging.v1.SendDirectMessageResponse
+	7,  // 9: messaging.v1.MessagingService.GetDMs:output_type -> messaging.v1.GetDMsResponse
+	2,  // 10: messaging.v1.MessagingService.RegisterUser:output_type -> messaging.v1.RegisterUserResponse
+	4,  // 11: messaging.v1.MessagingService.Login:output_type -> messaging.v1.LoginResponse
+	10, // 12: messaging.v1.MessagingService.GetUserInfo:output_type -> messaging.v1.GetUserInfoResponse
+	8,  // [8:13] is the sub-list for method output_type
+	3,  // [3:8] is the sub-list for method input_type
+	3,  // [3:3] is the sub-list for extension type_name
+	3,  // [3:3] is the sub-list for extension extendee
+	0,  // [0:3] is the sub-list for field type_name
 }
 
 func init() { file_messaging_v1_messaging_proto_init() }

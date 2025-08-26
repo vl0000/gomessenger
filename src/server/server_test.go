@@ -35,7 +35,7 @@ func newTestingServer() (*server.MessagingServer, error) {
 func TestServer(t *testing.T) {
 	t.Run("Message persists in db", func(t *testing.T) {
 		message_req := messagingv1.SendDirectMessageRequest{
-			Msg: &messagingv1.Message{
+			Message: &messagingv1.Message{
 				Sender:   "123-456",
 				Receiver: "654-321",
 				Content:  "Hello!!!",

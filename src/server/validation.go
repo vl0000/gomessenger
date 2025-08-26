@@ -32,10 +32,10 @@ func (s *MessagingServer) validateRegistrationRequest(req *connect.Request[messa
 func (s *MessagingServer) validateSendDirectMessageRequest(
 	req *connect.Request[messagingv1.SendDirectMessageRequest],
 ) error {
-	if req.Msg.Msg.Sender == "" || req.Msg.Msg.Receiver == "" || req.Msg.Msg.Content == "" {
+	if req.Msg.Message.Sender == "" || req.Msg.Message.Receiver == "" || req.Msg.Message.Content == "" {
 		return connect.NewError(connect.CodeInvalidArgument, nil)
 	}
-	if req.Msg.Msg.Sender == req.Msg.Msg.Receiver {
+	if req.Msg.Message.Sender == req.Msg.Message.Receiver {
 		return connect.NewError(connect.CodeInvalidArgument, nil)
 	}
 
@@ -49,7 +49,7 @@ func (s *MessagingServer) validateSendDirectMessageRequest(
 		return connect.NewError(connect.CodeUnauthenticated, nil)
 	}
 
-	if req.Msg.Msg.Sender != token.Subject() {
+	if req.Msg.Message.Sender != token.Subject() {
 		return connect.NewError(connect.CodeUnauthenticated, nil)
 	}
 

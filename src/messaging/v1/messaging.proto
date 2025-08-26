@@ -31,7 +31,7 @@ message LoginResponse {
 }
 
 message SendDirectMessageRequest {
-  Message msg = 1;
+  Message message = 1;
 }
 
 message GetDMsRequest {
@@ -44,7 +44,9 @@ message GetDMsResponse {
   repeated Message messages = 1;
 }
 
-message SendDirectMessageResponse { }
+message SendDirectMessageResponse {
+  Message message = 1;
+}
 
 message GetUserInfoRequest {
 string phone_number = 1;
@@ -56,7 +58,7 @@ string username = 2;
 
 service MessagingService {
 rpc SendDirectMessage(SendDirectMessageRequest) returns (SendDirectMessageResponse) {}
-rpc GetDMs(GetDMsRequest) returns (GetDMsResponse) {}
+rpc GetDMs(GetDMsRequest) returns (stream GetDMsResponse) {}
 rpc RegisterUser(RegisterUserRequest) returns (RegisterUserResponse) {}
 rpc Login(LoginRequest) returns (LoginResponse) {}
 rpc GetUserInfo(GetUserInfoRequest) returns (GetUserInfoResponse) {}

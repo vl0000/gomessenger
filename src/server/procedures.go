@@ -7,6 +7,7 @@ import (
 	"crypto/sha512"
 	"database/sql"
 	"errors"
+	"time"
 
 	"connectrpc.com/connect"
 	"github.com/go-chi/jwtauth/v5"
@@ -99,17 +100,24 @@ func DoSendDirectMessageWork(
 	db *sql.DB,
 	ctx context.Context,
 	msg *messagingv1.SendDirectMessageRequest,
-) (*messagingv1.SendDirectMessageResponse, error) {
+) (*messagingv1.Message, error) {
 
+	timestamp := time.Now().Format(time.DateTime)
 	_, err := db.Exec(`INSERT INTO messages (sender, receiver, content, timestamp) VALUES
 		(?, ?, ?, datetime('now'));
-		`, msg.Msg.Sender, msg.Msg.Receiver, msg.Msg.Content)
+		`, msg.Message.Sender, msg.Message.Receiver, msg.Message.Content, timestamp)
 
 	if err != nil {
 		return nil, connect.NewError(connect.CodeInvalidArgument, err)
 	}
+	a := messagingv1.Message{
+		Sender:    msg.Message.Sender,
+		Receiver:  msg.Message.Receiver,
+		Content:   msg.Message.Content,
+		Timestamp: &timestamp,
+	}
 
-	return &messagingv1.SendDirectMessageResponse{}, nil
+	return &a, nil
 }
 
 func DoGetDMsWork(

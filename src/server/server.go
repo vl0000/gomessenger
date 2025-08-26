@@ -16,15 +16,20 @@ import (
 	"golang.org/x/net/http2/h2c"
 )
 
+const CHANNEL_SIZE int = 32
+
 type MessagingServer struct {
 	Addr      string
 	Router    *chi.Mux
 	Db        *sql.DB
 	TokenAuth *jwtauth.JWTAuth
+	Conns     map[string]chan *messagingv1.Message
 }
 
 func (s *MessagingServer) Run() error {
 	s.TokenAuth = jwtauth.New("HS256", []byte(os.Getenv("SECRET_KEY")), nil)
+	s.Conns = make(map[string]chan *messagingv1.Message)
+
 	log.Printf("Starting server in address: %s", s.Addr)
 	return http.ListenAndServe(s.Addr, h2c.NewHandler(s.Router, &http2.Server{}))
 }
@@ -32,6 +37,9 @@ func (s *MessagingServer) Run() error {
 func (s *MessagingServer) Shutdown() {
 	log.Println("Shutting down")
 	s.Db.Close()
+	for _, channel := range s.Conns {
+		close(channel)
+	}
 }
 
 func (s *MessagingServer) SendDirectMessage(
@@ -52,28 +60,55 @@ func (s *MessagingServer) SendDirectMessage(
 		return nil, connect.NewError(connect.CodeUnknown, err)
 	}
 
-	return connect.NewResponse(res), nil
+	if channel, ok := s.Conns[req.Msg.Message.Receiver+req.Msg.Message.Sender]; ok {
+		channel <- res
+	}
+
+	return connect.NewResponse(&messagingv1.SendDirectMessageResponse{Message: res}), nil
 }
 
 func (s *MessagingServer) GetDMs(
 	ctx context.Context,
 	req *connect.Request[messagingv1.GetDMsRequest],
-) (*connect.Response[messagingv1.GetDMsResponse], error) {
+	stream *connect.ServerStream[messagingv1.GetDMsResponse],
+) error {
 
 	if err := ctx.Err(); err != nil {
-		return nil, err
+		return err
 	}
 
 	err := s.validateGetDMsRequest(req)
 	if err != nil {
-		return nil, err
+		return err
 	}
 
 	res, err := DoGetDMsWork(s.Db, ctx, req.Msg)
 	if err != nil {
-		return nil, connect.NewError(connect.CodeUnknown, err)
+		return connect.NewError(connect.CodeUnknown, err)
 	}
-	return connect.NewResponse(res), nil
+
+	if err = stream.Conn().Send(res); err != nil {
+		return err
+	}
+
+	s.Conns[req.Msg.UserA+req.Msg.UserB] = make(chan *messagingv1.Message, CHANNEL_SIZE)
+
+	for {
+		if channel, ok := s.Conns[req.Msg.UserA+req.Msg.UserB]; ok {
+
+			err = stream.Send(&messagingv1.GetDMsResponse{
+				Messages: []*messagingv1.Message{<-channel},
+			})
+
+			if err != nil {
+				return err
+			}
+		} else {
+			break
+		}
+	}
+
+	return nil
 }
 
 func (s *MessagingServer) RegisterUser(

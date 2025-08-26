@@ -80,6 +80,9 @@ The database is queried for a user matching the phone number contained in the re
 These are identical to the ones in [GetUserInfo](#GetUserInfo)
 
 ### **Process 2.0**
+A channel will be opened and stored in a map. It's key will be a concatenated string of UserA's number with UserB's. This channel will be used to instantly receive messages via server stream as soon as theyre sent.
+
+### **Process 3.0**
 The database will be queried for direct messages between the requesting **User A** phone number(contained in the token and request) and the target **User B**(contained in the request). The query used:
 ```sql
 SELECT * FROM messages
@@ -95,3 +98,12 @@ The messages are then serialised into an array of the type **Message** defined a
 |Receiver | string | True |
 |Content| string | True |
 |Timestamp| string | False |
+
+## SendMessage
+![](./assets/SendMessageProcedure.png)
+
+### **Process 2.0**
+The message is stored in the database and it's row is retrieved, then scanned and turned into a "Message" type containing a timestamp and an id.
+
+### **Process 2.1**
+In this step, the server checks whether the receiver has an open channel. If not, **Process 3.0** will be skipped.

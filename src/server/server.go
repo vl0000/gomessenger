@@ -23,7 +23,8 @@ type MessagingServer struct {
 	Router    *chi.Mux
 	Db        *sql.DB
 	TokenAuth *jwtauth.JWTAuth
-	Conns     map[string]chan *messagingv1.Message
+	// Used to communicate with server streams opened with GetDMs()
+	Conns map[string]chan *messagingv1.Message
 }
 
 func (s *MessagingServer) Run() error {

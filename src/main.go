@@ -11,6 +11,7 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
+	"github.com/go-chi/httprate"
 	"github.com/vl0000/gomessenger/data"
 	"github.com/vl0000/gomessenger/gen/messaging/v1/messagingv1connect"
 	"github.com/vl0000/gomessenger/server"
@@ -34,6 +35,7 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	r.Use(middleware.Timeout(5 * time.Second))
+	r.Use(httprate.LimitByIP(100, 1*time.Minute))
 
 	r.Handle(path+"*", h2c.NewHandler(handler, &http2.Server{}))
 

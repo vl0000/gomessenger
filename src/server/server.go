@@ -11,6 +11,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/jwtauth/v5"
 
+	"github.com/vl0000/gomessenger/data"
 	messagingv1 "github.com/vl0000/gomessenger/gen/messaging/v1"
 	"golang.org/x/net/http2"
 	"golang.org/x/net/http2/h2c"
@@ -25,6 +26,30 @@ type MessagingServer struct {
 	TokenAuth *jwtauth.JWTAuth
 	// Used to communicate with server streams opened with GetDMs()
 	Conns map[string]chan *messagingv1.Message
+}
+
+func New() *MessagingServer {
+	server := MessagingServer{}
+
+	if host, ok := os.LookupEnv("HOST"); ok {
+		server.Addr = host
+	} else {
+		server.Addr = "localhost:3000"
+	}
+
+	if _, ok := os.LookupEnv("DB_SCHEMA_PATH"); !ok {
+		os.Setenv("DB_SCHEMA_PATH", "./data/database.sql")
+	}
+
+	db, err := data.SetupTestDatabase("./testdb.db")
+	if err != nil || db == nil {
+		log.Fatalf("Could not setup DB. Error:\n\t%s", err)
+	}
+	server.Db = db
+
+	server.Router = chi.NewRouter()
+
+	return &server
 }
 
 func (s *MessagingServer) Run() error {

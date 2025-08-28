@@ -4,15 +4,12 @@ import (
 	"context"
 	"log"
 	"net/http"
-	"os"
 	"os/signal"
 	"syscall"
 	"time"
 
-	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/go-chi/httprate"
-	"github.com/vl0000/gomessenger/data"
 	"github.com/vl0000/gomessenger/gen/messaging/v1/messagingv1connect"
 	"github.com/vl0000/gomessenger/server"
 	"golang.org/x/net/http2"
@@ -20,28 +17,16 @@ import (
 )
 
 func main() {
-	s := server.MessagingServer{}
-	s.Addr = "localhost:3000"
-	os.Setenv("DB_SCHEMA_PATH", "./data/database.sql")
-	os.Setenv("STATIC_FOLDER", "./public/static")
-	db, err := data.SetupTestDatabase("./testdb.db")
-	if err != nil || db == nil {
-		log.Fatalf("Could not setup DB. Error:\n\t%s", err)
-	}
-	s.Db = db
+	s := server.New()
 
-	path, handler := messagingv1connect.NewMessagingServiceHandler(&s)
+	path, handler := messagingv1connect.NewMessagingServiceHandler(s)
 
-	r := chi.NewRouter()
-	r.Use(middleware.Logger)
-	r.Use(middleware.Timeout(5 * time.Second))
-	r.Use(httprate.LimitByIP(100, 1*time.Minute))
+	s.Router.Use(middleware.Logger)
+	s.Router.Use(middleware.Timeout(5 * time.Second))
+	s.Router.Use(httprate.LimitByIP(100, 1*time.Minute))
 
-	r.Handle(path+"*", h2c.NewHandler(handler, &http2.Server{}))
-
-	r.Handle("/*", http.FileServer(http.Dir(os.Getenv("STATIC_FOLDER"))))
-
-	s.Router = r
+	s.Router.Handle(path+"*", h2c.NewHandler(handler, &http2.Server{}))
+	s.Router.Handle("/*", http.FileServer(http.Dir("./public/_app/")))
 
 	go func() {
 		err := s.Run()

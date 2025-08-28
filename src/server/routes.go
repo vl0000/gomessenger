@@ -32,7 +32,7 @@ func ServeHTML(path string) http.HandlerFunc {
 func (s *MessagingServer) LoadRoutes() {
 
 	// Loads static files for svelte apps
-	s.Router.Handle("/*", http.FileServer(http.Dir("./public/")))
+	s.Router.Handle("/*", http.FileServer(http.Dir("./public/static/")))
 
 	// Loads the paths for the messaging service
 	path, handler := messagingv1connect.NewMessagingServiceHandler(s)

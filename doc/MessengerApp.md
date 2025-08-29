@@ -1,15 +1,12 @@
 # GoMessenger
-*last updated:* 2025/08/19
+*last updated:* 2025/08/28
 
 ## Overview
 This small messaging app is intended to showcase my ability to use Golang to deliver software all by myself.
 
 ## Goals and Non-Goals
 ### Goals
-* Creating a fullstack app with both a mobile and web client
-* Messages should be delivered regardless of whether the receipient is online or not.
-* one-on-one chats should be completely encrypted
-* Eventually, support group chats with E2E encryption
+* Creating a messaging app that can deliver messages between two users.
 
 ### Non goals
 * Supporting video or voice calls

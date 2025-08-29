@@ -4,9 +4,13 @@ WORKDIR /app
 
 COPY ./src .
 
+RUN mkdir ./vol
+VOLUME ./vol
+
 ENV HOST=0.0.0.0:3000
 # THIS MUST BE SET!!
-ENV SECRET_KEY=
+ENV SECRET_KEY=key
+ENV DB_PATH=/vol/database.db
 
 EXPOSE 3000
 

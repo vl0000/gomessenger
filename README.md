@@ -2,7 +2,9 @@
 
 GoMessenger is a web-based messaging app built with ConnectRPC.
 
-some gif here
+![](./doc/assets/demonstration.GIF)
+explain the public folder
+link to the front end repo
 
 ## Documentation
 
@@ -14,5 +16,9 @@ some gif here
 Add your secret key to the `SECRET_KEY` enviroment variable. If the key is not set, JWTs **will not work**.
 Afterwards, open a console and simply use:
 ```bash
-docker build .
+docker build . -t [tag of your choice]
+```
+To run:
+```Bash
+docker run -p 3000:80 [image_id]
 ```

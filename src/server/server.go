@@ -41,7 +41,7 @@ func New() *MessagingServer {
 		os.Setenv("DB_SCHEMA_PATH", "./data/database.sql")
 	}
 
-	db, err := data.SetupTestDatabase("./testdb.db")
+	db, err := data.SetupTestDatabase(os.Getenv("DB_PATH"))
 	if err != nil || db == nil {
 		log.Fatalf("Could not setup DB. Error:\n\t%s", err)
 	}

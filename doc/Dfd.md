@@ -3,6 +3,8 @@ Processes numbered 1.x are always contained within a **validateXRequest** method
 Processes of other numbers are done within a **doXWork** method, defined in `src/server/procedures.go`. An exception is the "Generate Response" process. That is done in the server handler directly. the **doXWork** functions only return message types, not responses.
 Any failure within any step will generate an error code that is then sent to the user.
 
+**A light theme is recommended when reading this document**
+
 ## RegisterUser
 ![](./assets/RegisterUserProcedure.png)
 

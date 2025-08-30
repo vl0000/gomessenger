@@ -22,3 +22,4 @@ To run:
 ```Bash
 docker run -p 3000:80 [image_id]
 ```
+When trying to build with podman, add the flag `--format docker`.

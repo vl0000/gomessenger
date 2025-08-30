@@ -3,9 +3,8 @@
 GoMessenger is a web-based messaging app built with ConnectRPC.
 
 ![](./doc/assets/demonstration.GIF)
-explain the public folder
-link to the front end repo
 
+[Front-end repo](https://github.com/vl0000/gomessenger-frontend)
 ## Documentation
 
 [Data flow model](https://github.com/vl0000/gomessenger/blob/main/doc/Dfd.md)

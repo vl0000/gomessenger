@@ -21,7 +21,7 @@ func (s *MessagingServer) validateRegistrationRequest(req *connect.Request[messa
 	}
 	exists, err := CheckUserExists(s.Db, req.Msg.PhoneNumber)
 	if err != nil || exists {
-		return connect.NewError(connect.CodeUnauthenticated, err)
+		return connect.NewError(connect.CodeAlreadyExists, err)
 	}
 	if !regexp.MustCompile(`^\d{3}-\d{3}$`).MatchString(req.Msg.PhoneNumber) {
 		return connect.NewError(connect.CodeInvalidArgument, nil)
@@ -95,7 +95,7 @@ func (s *MessagingServer) validateGetUserInfo(req *connect.Request[messagingv1.G
 
 	exists, err := CheckUserExists(s.Db, token.Subject())
 	if err != nil || !exists {
-		return connect.NewError(connect.CodeUnauthenticated, err)
+		return connect.NewError(connect.CodeNotFound, err)
 	}
 
 	if token.Expiration().Before(time.Now()) {

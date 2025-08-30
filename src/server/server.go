@@ -37,6 +37,10 @@ func New() *MessagingServer {
 		server.Addr = "localhost:3000"
 	}
 
+	if _, ok := os.LookupEnv("SECRET_KEY"); !ok {
+		log.Fatal("No secret key was set. Check Dockerfile")
+	}
+
 	if _, ok := os.LookupEnv("DB_SCHEMA_PATH"); !ok {
 		os.Setenv("DB_SCHEMA_PATH", "./data/database.sql")
 	}

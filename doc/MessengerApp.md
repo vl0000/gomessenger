@@ -1,5 +1,5 @@
 # GoMessenger
-*last updated:* 2025/08/28
+*last updated:* 2025/09/09
 
 ## Overview
 This small messaging app is intended to showcase my ability to use Golang to deliver software all by myself.

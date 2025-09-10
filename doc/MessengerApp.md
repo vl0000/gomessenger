@@ -7,6 +7,7 @@ This small messaging app is intended to showcase my ability to use Golang to del
 ## Goals and Non-Goals
 ### Goals
 * Creating a messaging app that can deliver messages between two users.
+* Learning more about Go and ConnectRPC
 
 ### Non goals
 * Supporting video or voice calls

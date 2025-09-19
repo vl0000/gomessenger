@@ -1,6 +1,6 @@
 # GoMessenger
 
-GoMessenger is a web-based messaging app built with ConnectRPC.
+GoMessenger is a web-based messaging app built with ConnectRPC created for learning purposes.
 
 ![](./doc/assets/demonstration.GIF)
 
